@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EU AI Act Readiness Check</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue-dark:   #1e3a8a;
+      --blue:        #1d4ed8;
+      --blue-light:  #dbeafe;
+      --gray-50:     #f8fafc;
+      --gray-100:    #f1f5f9;
+      --gray-200:    #e2e8f0;
+      --gray-400:    #94a3b8;
+      --gray-600:    #475569;
+      --gray-800:    #1e293b;
+      --red-bg:      #fee2e2;
+      --red-text:    #991b1b;
+      --orange-bg:   #ffedd5;
+      --orange-text: #7c2d12;
+      --yellow-bg:   #fef9c3;
+      --yellow-text: #713f12;
+      --green-bg:    #dcfce7;
+      --green-text:  #166534;
+      --purple-bg:   #f3e8ff;
+      --purple-text: #4c1d95;
+      --teal-bg:     #ccfbf1;
+      --teal-text:   #0f766e;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-800);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--blue-dark);
+      color: white;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    header h1 { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.02em; }
+    header p  { margin-top: 0.4rem; color: #93c5fd; font-size: 0.95rem; }
+
+    /* ── Disclaimer banner ── */
+    .disclaimer-banner {
+      background: #fef3c7;
+      border-bottom: 1px solid #fcd34d;
+      padding: 0.6rem 1.5rem;
+      text-align: center;
+      font-size: 0.82rem;
+      color: #78350f;
+    }
+
+    /* ── Layout ── */
+    .container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ── Form card ── */
+    .card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid var(--gray-200);
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .card h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--blue-light);
+    }
+
+    label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--gray-600); margin-bottom: 0.35rem; }
+    label span { font-weight: 400; color: var(--gray-400); font-size: 0.8rem; }
+
+    textarea, select {
+      width: 100%;
+      padding: 0.65rem 0.875rem;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: var(--gray-800);
+      background: white;
+      transition: border-color .15s;
+      margin-bottom: 1.1rem;
+    }
+    textarea { resize: vertical; min-height: 90px; }
+    textarea:focus, select:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px #dbeafe; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--blue);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .15s, opacity .15s;
+    }
+    button[type="submit"]:hover  { background: var(--blue-dark); }
+    button[type="submit"]:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* ── Loading ── */
+    #loading {
+      display: none;
+      text-align: center;
+      padding: 2.5rem;
+      color: var(--gray-600);
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--gray-200);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Error ── */
+    #error {
+      display: none;
+      background: var(--red-bg);
+      color: var(--red-text);
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    /* ── Results ── */
+    #results { display: none; }
+
+    .section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gray-400);
+      margin-bottom: 0.6rem;
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .b-yes        { background: var(--green-bg);  color: var(--green-text); }
+    .b-no         { background: var(--red-bg);    color: var(--red-text); }
+    .b-partially  { background: var(--yellow-bg); color: var(--yellow-text); }
+    .b-prohibited          { background: #fca5a5; color: #7f1d1d; }
+    .b-high_risk_annex_iii,
+    .b-high_risk_product_safety { background: var(--orange-bg); color: var(--orange-text); }
+    .b-limited_risk        { background: var(--yellow-bg); color: var(--yellow-text); }
+    .b-minimal_risk        { background: var(--green-bg);  color: var(--green-text); }
+    .b-gpai                { background: var(--purple-bg); color: var(--purple-text); }
+    .b-unclear             { background: var(--gray-100); color: var(--gray-600); }
+    .b-fact_from_act       { background: var(--blue-light); color: var(--blue-dark); }
+    .b-interpretation      { background: var(--gray-100); color: var(--gray-600); }
+    .b-mixed               { background: var(--teal-bg); color: var(--teal-text); }
+    .b-in_force            { background: var(--green-bg); color: var(--green-text); }
+    .b-upcoming            { background: var(--yellow-bg); color: var(--yellow-text); }
+    .b-immediate           { background: var(--red-bg);    color: var(--red-text); }
+    .b-short_term          { background: var(--orange-bg); color: var(--orange-text); }
+    .b-medium_term         { background: var(--blue-light); color: var(--blue-dark); }
+    .b-high-conf           { background: var(--green-bg); color: var(--green-text); }
+    .b-medium-conf         { background: var(--yellow-bg); color: var(--yellow-text); }
+    .b-low-conf            { background: var(--red-bg);    color: var(--red-text); }
+
+    /* ── Risk banner ── */
+    .risk-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+    }
+    .risk-banner.prohibited           { background: #fef2f2; border: 1px solid #fca5a5; }
+    .risk-banner.high_risk_annex_iii,
+    .risk-banner.high_risk_product_safety { background: #fff7ed; border: 1px solid #fed7aa; }
+    .risk-banner.limited_risk         { background: #fefce8; border: 1px solid #fde047; }
+    .risk-banner.minimal_risk         { background: #f0fdf4; border: 1px solid #86efac; }
+    .risk-banner.gpai                 { background: #faf5ff; border: 1px solid #d8b4fe; }
+    .risk-banner.unclear              { background: var(--gray-100); border: 1px solid var(--gray-200); }
+    .risk-label { font-size: 1.15rem; font-weight: 700; }
+
+    /* ── Lists ── */
+    .obligation-list, .step-list, .missing-list { list-style: none; }
+    .obligation-list li {
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 0.9rem;
+    }
+    .obligation-list li:last-child { border-bottom: none; }
+    .obligation-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.3rem; }
+
+    .step-list li {
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      padding: 0.85rem;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      margin-bottom: 0.6rem;
+      background: white;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--blue-dark);
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-content strong { font-size: 0.92rem; display: block; margin-bottom: 0.25rem; }
+    .step-content .rationale { font-size: 0.82rem; color: var(--gray-600); }
+
+    /* ── Deadline table ── */
+    .deadline-list { list-style: none; }
+    .deadline-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 0.88rem;
+    }
+    .deadline-item:last-child { border-bottom: none; }
+    .deadline-date { font-weight: 700; min-width: 110px; color: var(--gray-800); }
+    .deadline-text { flex: 1; }
+    .not-applicable { opacity: 0.45; }
+
+    /* ── Reasoning text ── */
+    .reasoning {
+      font-size: 0.88rem;
+      color: var(--gray-600);
+      background: var(--gray-50);
+      border-left: 3px solid var(--gray-200);
+      padding: 0.75rem 1rem;
+      border-radius: 0 6px 6px 0;
+      margin-top: 0.6rem;
+      white-space: pre-line;
+    }
+
+    /* ── Articles pill group ── */
+    .articles { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+    .article-pill {
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* ── Confidence ── */
+    .conf-grid { display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; align-items: start; }
+    .conf-label { font-weight: 600; font-size: 0.85rem; color: var(--gray-600); }
+    .missing-list li { font-size: 0.85rem; padding: 0.3rem 0; color: var(--gray-600); }
+    .missing-list li::before { content: "• "; color: var(--orange-text); font-weight: 700; }
+
+    /* ── Final disclaimer ── */
+    .disclaimer-block {
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 10px;
+      padding: 1.1rem 1.25rem;
+      font-size: 0.82rem;
+      color: #78350f;
+      line-height: 1.6;
+    }
+    .disclaimer-block strong { display: block; margin-bottom: 0.3rem; }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.78rem;
+      color: var(--gray-400);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>EU AI Act Readiness Check</h1>
+  <p>Classify your AI system under Regulation (EU) 2024/1689 — powered by Claude</p>
+</header>
+
+<div class="disclaimer-banner">
+  Informational tool only — not legal advice. Always verify with qualified legal counsel.
+</div>
+
+<div class="container">
+
+  <!-- ── Input form ── -->
+  <div class="card">
+    <h2>Describe your AI system</h2>
+    <form id="assessment-form">
+
+      <label for="company">
+        Company description
+        <span>— what your organization does, size, EU presence</span>
+      </label>
+      <textarea id="company" name="company" rows="3"
+        placeholder="E.g. Mid-size HR software company serving EU-based enterprises, ~200 employees, headquartered in the Netherlands."
+        required></textarea>
+
+      <label for="ai_system">
+        AI system / use case
+        <span>— what it does, inputs, outputs, who is affected</span>
+      </label>
+      <textarea id="ai_system" name="ai_system" rows="4"
+        placeholder="E.g. We screen incoming CVs automatically, ranking candidates by suitability score before a recruiter reviews them. The model uses CV text and job description as input and outputs a 0–100 score plus top keywords."
+        required></textarea>
+
+      <div class="form-row">
+        <div>
+          <label for="sector">Sector</label>
+          <select id="sector" name="sector" required>
+            <option value="" disabled selected>Select sector…</option>
+            <option value="energy">Energy</option>
+            <option value="healthcare">Healthcare</option>
+            <option value="hr_employment">HR / Employment</option>
+            <option value="finance">Finance / Banking / Insurance</option>
+            <option value="manufacturing">Manufacturing</option>
+            <option value="public_sector">Public sector</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label for="role">Your role in the AI value chain</label>
+          <select id="role" name="role" required>
+            <option value="" disabled selected>Select role…</option>
+            <option value="provider">Provider (we build / develop it)</option>
+            <option value="deployer">Deployer (we use a third-party system)</option>
+            <option value="importer">Importer (we bring it into the EU market)</option>
+            <option value="distributor">Distributor (we resell / make it available)</option>
+            <option value="not_sure">Not sure</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" id="submit-btn">Run EU AI Act Assessment</button>
+    </form>
+  </div>
+
+  <!-- ── Loading ── -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <p>Analysing your AI system against the EU AI Act…</p>
+    <p style="font-size:0.8rem;color:#94a3b8;margin-top:0.4rem;">This usually takes 10–20 seconds.</p>
+  </div>
+
+  <!-- ── Error ── -->
+  <div id="error"></div>
+
+  <!-- ── Results ── -->
+  <div id="results">
+
+    <!-- 1. Scope -->
+    <div class="card" id="section-scope">
+      <h2>1 · In scope of the EU AI Act?</h2>
+      <div id="scope-content"></div>
+    </div>
+
+    <!-- 2. Risk classification -->
+    <div class="card" id="section-risk">
+      <h2>2 · Risk classification</h2>
+      <div id="risk-content"></div>
+    </div>
+
+    <!-- 3. Key obligations -->
+    <div class="card" id="section-obligations">
+      <h2>3 · Key obligations for your role</h2>
+      <ul class="obligation-list" id="obligations-content"></ul>
+    </div>
+
+    <!-- 4. Deadlines -->
+    <div class="card" id="section-deadlines">
+      <h2>4 · Compliance deadlines</h2>
+      <ul class="deadline-list" id="deadlines-content"></ul>
+    </div>
+
+    <!-- 5. Next steps -->
+    <div class="card" id="section-steps">
+      <h2>5 · Three concrete next steps</h2>
+      <ol class="step-list" id="steps-content" style="list-style:none;"></ol>
+    </div>
+
+    <!-- 6. Confidence -->
+    <div class="card" id="section-confidence">
+      <h2>6 · Confidence &amp; information gaps</h2>
+      <div id="confidence-content"></div>
+    </div>
+
+    <!-- Legal disclaimer -->
+    <div class="disclaimer-block">
+      <strong>Legal disclaimer</strong>
+      This assessment is generated by an AI tool using publicly available information
+      about Regulation (EU) 2024/1689 (EU AI Act). It is provided for informational
+      and educational purposes only and does <strong>not</strong> constitute legal
+      advice. Findings marked <em>interpretation</em> represent the tool's analysis
+      and should be verified with qualified legal or compliance counsel before any
+      compliance decisions are made. The EU AI Act is a complex and evolving
+      framework; article interpretations may develop through guidance, case law,
+      and delegated acts. Verify all findings against the official text published
+      in the Official Journal of the European Union (OJ L 2024/1689).
+    </div>
+
+  </div><!-- #results -->
+
+</div><!-- .container -->
+
+<footer>
+  EU AI Act Readiness Check · v0 · Powered by Claude (claude-sonnet-4-6) ·
+  Assessments are logged locally for auditability.
+</footer>
+
+<script>
+  /* ── Helpers ── */
+  function badge(text, cls) {
+    return `<span class="badge b-${cls}">${text}</span>`;
+  }
+
+  function sourceTag(source_type) {
+    const labels = {
+      fact_from_act: 'Fact from Act',
+      interpretation: 'Interpretation',
+      mixed: 'Mixed'
+    };
+    return badge(labels[source_type] || source_type, source_type);
+  }
+
+  function articlePills(articles) {
+    if (!articles || !articles.length) return '';
+    return '<div class="articles">' +
+      articles.map(a => `<span class="article-pill">${escHtml(a)}</span>`).join('') +
+      '</div>';
+  }
+
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* ── Section renderers ── */
+
+  function renderScope(d) {
+    const verdictLabel = { yes: 'Yes — in scope', no: 'No — out of scope', partially: 'Partially in scope' };
+    document.getElementById('scope-content').innerHTML = `
+      <p class="section-title">Verdict</p>
+      ${badge(verdictLabel[d.verdict] || d.verdict, d.verdict)}
+      ${sourceTag(d.source_type)}
+      <div class="reasoning">${escHtml(d.reasoning)}</div>
+      ${articlePills(d.articles_cited)}
+    `;
+  }
+
+  function renderRisk(d) {
+    const riskClass = d.category.replace(/_/g, '_');
+    document.getElementById('risk-content').innerHTML = `
+      <div class="risk-banner ${d.category}">
+        <div>
+          <div class="risk-label">${escHtml(d.label)}</div>
+          <div style="margin-top:0.4rem;">${sourceTag(d.source_type)}</div>
+        </div>
+      </div>
+      <div class="reasoning">${escHtml(d.reasoning)}</div>
+      ${articlePills(d.articles_cited)}
+    `;
+  }
+
+  function renderObligations(items) {
+    if (!items || !items.length) {
+      document.getElementById('obligations-content').innerHTML =
+        '<li style="color:#94a3b8;font-size:.9rem;">No specific obligations identified — check scope result.</li>';
+      return;
+    }
+    document.getElementById('obligations-content').innerHTML = items.map(item => `
+      <li>
+        <div>${escHtml(item.obligation)}</div>
+        <div class="obligation-meta">
+          <span class="article-pill">${escHtml(item.article)}</span>
+          ${sourceTag(item.source_type)}
+        </div>
+      </li>
+    `).join('');
+  }
+
+  function renderDeadlines(items) {
+    if (!items || !items.length) {
+      document.getElementById('deadlines-content').innerHTML =
+        '<li style="color:#94a3b8;font-size:.9rem;">No deadlines identified.</li>';
+      return;
+    }
+    document.getElementById('deadlines-content').innerHTML = items.map(item => `
+      <li class="deadline-item ${item.applies_to_this_system ? '' : 'not-applicable'}">
+        <div class="deadline-date">${escHtml(item.date)}</div>
+        <div class="deadline-text">${escHtml(item.description)}</div>
+        <div style="flex-shrink:0;display:flex;flex-direction:column;gap:.3rem;align-items:flex-end;">
+          ${badge(item.status === 'in_force' ? 'In force' : 'Upcoming', item.status)}
+          ${item.applies_to_this_system ? badge('Applies', 'yes') : badge('Not applicable', 'no')}
+        </div>
+      </li>
+    `).join('');
+  }
+
+  function renderSteps(items) {
+    if (!items || !items.length) return;
+    document.getElementById('steps-content').innerHTML = items.map((item, i) => `
+      <li>
+        <div class="step-num">${i + 1}</div>
+        <div class="step-content">
+          <strong>${escHtml(item.step)}</strong>
+          <div style="margin-top:0.3rem;">${badge(
+            item.urgency === 'immediate' ? 'Immediate' :
+            item.urgency === 'short_term' ? 'Short term' : 'Medium term',
+            item.urgency
+          )}</div>
+          <div class="rationale">${escHtml(item.rationale)}</div>
+        </div>
+      </li>
+    `).join('');
+  }
+
+  function renderConfidence(d) {
+    const confBadgeClass = d.level === 'high' ? 'high-conf' : d.level === 'medium' ? 'medium-conf' : 'low-conf';
+    const missing = (d.missing_information || []).map(m => `<li>${escHtml(m)}</li>`).join('');
+    document.getElementById('confidence-content').innerHTML = `
+      <div class="conf-grid">
+        <span class="conf-label">Confidence</span>
+        <div>${badge(d.level.charAt(0).toUpperCase() + d.level.slice(1), confBadgeClass)}</div>
+        <span class="conf-label">Rationale</span>
+        <div style="font-size:.88rem;color:#475569;">${escHtml(d.rationale)}</div>
+        ${missing ? `<span class="conf-label">Info gaps</span>
+        <ul class="missing-list">${missing}</ul>` : ''}
+      </div>
+    `;
+  }
+
+  function renderResults(data) {
+    renderScope(data.in_scope);
+    renderRisk(data.risk_classification);
+    renderObligations(data.key_obligations);
+    renderDeadlines(data.deadlines);
+    renderSteps(data.next_steps);
+    renderConfidence(data.confidence);
+  }
+
+  /* ── Form submit ── */
+  document.getElementById('assessment-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const btn     = document.getElementById('submit-btn');
+    const loading = document.getElementById('loading');
+    const results = document.getElementById('results');
+    const errorEl = document.getElementById('error');
+
+    results.style.display = 'none';
+    errorEl.style.display = 'none';
+    btn.disabled = true;
+    loading.style.display = 'block';
+
+    try {
+      const resp = await fetch('/assess', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          company_description:   document.getElementById('company').value.trim(),
+          ai_system_description: document.getElementById('ai_system').value.trim(),
+          sector:                document.getElementById('sector').value,
+          role:                  document.getElementById('role').value,
+        }),
+      });
+
+      if (!resp.ok) {
+        let detail = 'Assessment failed — please try again.';
+        try { detail = (await resp.json()).detail || detail; } catch (_) {}
+        throw new Error(detail);
+      }
+
+      const data = await resp.json();
+      renderResults(data);
+      results.style.display = 'block';
+      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (err) {
+      errorEl.textContent = '⚠ ' + err.message;
+      errorEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      loading.style.display = 'none';
+    }
+  });
+</script>
+</body>
+</html>
