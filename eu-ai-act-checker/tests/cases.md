@@ -24,13 +24,17 @@ Run each through the app and record the actual output below.
 - **Deadline**: 2 August 2026 (Art 50 application date)
 - **Notes**: No high-risk Annex III category applies. Chatbot does not screen candidates, score credit, or make consequential decisions about individuals. Simple transparency disclosure is the main requirement.
 
-**Actual output** *(fill in after running)*
+**Actual output**
 
 ```
-Classification:
-Articles cited:
-Confidence:
-Notes:
+Classification: limited_risk — "Limited Risk – Conversational AI / Chatbot (Article 50(1) Transparency Obligation)"
+Articles cited: Article 3(1), Article 5, Article 6(1), Article 6(2), Article 50(1)
+Confidence: high
+Key obligation (fact_from_act): Inform users in real time they are interacting with an AI
+  system at the start of the interaction (Art 50(1))
+Notable: Correctly flagged that if the chatbot handled financial products or HR
+  queries, it could reclassify into Annex III — good edge-case awareness.
+RESULT: PASS ✓
 ```
 
 ---
@@ -55,13 +59,17 @@ Notes:
 - **Deadline**: 2 August 2026 — **URGENT** (7 weeks from reference date).
 - **Notes**: The automatic rejection pile means the system materially influences hiring decisions. The Art 6(3) narrow-use exception does NOT apply here. Providers bear the heaviest obligations.
 
-**Actual output** *(fill in after running)*
+**Actual output**
 
 ```
-Classification:
-Articles cited:
-Confidence:
-Notes:
+Classification: high_risk_annex_iii — "High-Risk (Annex III §4 – Employment, Workers Management &
+  Access to Employment)"
+Articles cited: 3(1), 3(3), 6(2), 6(3), 9, 10, 11, 12, 13, 14, 15, 16, 17, 43, 47, 48, 49
+Confidence: high
+Key finding: Correctly flagged the "rejected pile recruiters rarely review" as a red flag
+  violating Art 14 human oversight — and required product redesign, not just documentation.
+All 14 provider obligations correctly identified, all tagged fact_from_act.
+RESULT: PASS ✓
 ```
 
 ---
@@ -87,13 +95,18 @@ Notes:
 - **Confidence**: Medium — additional information about the operational integration is needed.
 - **Notes**: This is a deliberately borderline case to test the tool's nuance. A purely advisory forecasting model used by human planners should be minimal risk. An AI that auto-dispatches or triggers automated grid responses crosses into Annex III §2.
 
-**Actual output** *(fill in after running)*
+**Actual output**
 
 ```
-Classification:
-Articles cited:
-Confidence:
-Notes:
+Classification: minimal_risk — "Minimal Risk – Internal Demand Forecasting Tool"
+Articles cited: Article 2, Article 3(1), Article 3(4), Article 5, Article 6(1), Article 6(2),
+  Article 6(3), Article 50, Annex III
+Confidence: high
+Key finding: Correctly resolved the borderline case — pure advisory forecasting to human
+  operators = minimal risk. Correctly identified the reclassification trigger: "if outputs
+  are ever used to trigger automated or semi-automated grid actions without human review,
+  the system could cross into Annex III §2."
+RESULT: PASS ✓ (nuanced borderline correctly handled)
 ```
 
 ---
@@ -118,13 +131,18 @@ Notes:
 - **Key obligations (provider)**: Same as high-risk provider obligations (Art 9–17), PLUS the device must undergo conformity assessment under BOTH MDR and the AI Act. Technical documentation must cover the AI system specifically (Annex IV).
 - **Notes**: This is the product-safety path, not the Annex III path. The notified body requirement under MDR is what triggers Art 6(1). The later 2027 deadline gives this company slightly more time than Annex III high-risk systems, but planning should start immediately.
 
-**Actual output** *(fill in after running)*
+**Actual output**
 
 ```
-Classification:
-Articles cited:
-Confidence:
-Notes:
+Classification: high_risk_product_safety — "High-Risk – Product Safety Path
+  (Article 6(1), Annex I – MDR Class IIb Medical Device)"
+Articles cited: Article 6(1), Article 3(1), Article 3(3), Annex I (MDR – Regulation (EU) 2017/745)
+Confidence: high
+Key finding: Correctly identified the 2027 deadline (not 2026) — Art 6(1) product-safety
+  path has the later application date. Correctly flagged the open question about whether
+  the MDR notified body assessment overlaps with AI Act conformity assessment, and advised
+  engaging the notified body to clarify (tagged interpretation — good epistemic honesty).
+RESULT: PASS ✓
 ```
 
 ---
@@ -147,13 +165,16 @@ Notes:
 - **Key obligations**: None mandatory. Voluntary code of conduct encouraged.
 - **Notes**: Spam filtering does not fall under any Annex III category. It does not assess individuals, does not gate access to services, and is not a safety component of a regulated product. No transparency obligation under Art 50 applies — there is no direct user interaction where the AI presents itself as a human. This is the baseline minimal-risk case.
 
-**Actual output** *(fill in after running)*
+**Actual output**
 
 ```
-Classification:
-Articles cited:
-Confidence:
-Notes:
+Classification: minimal_risk — "Minimal Risk – Spam/Content Filter"
+Articles cited: Article 5, Article 3(63), Article 6(1), Article 6(2), Article 50
+Confidence: high
+Key finding: No mandatory obligations. Correctly identified reclassification triggers
+  (individual user profiling, pipeline into consequential decisions). Sensible governance
+  recommendation even with no legal requirement.
+RESULT: PASS ✓
 ```
 
 ---
