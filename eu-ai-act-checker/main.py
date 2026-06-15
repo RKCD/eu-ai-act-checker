@@ -1,12 +1,14 @@
 import json
 import os
+import time
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 import anthropic
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -23,6 +25,31 @@ LOG_PATH = Path("logs/assessments.jsonl")
 LOG_PATH.parent.mkdir(exist_ok=True)
 
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+# ── Rate limiting (1 request / 60 s / IP, in-memory) ─────────────────────────
+
+_last_request: dict[str, float] = defaultdict(float)
+RATE_LIMIT_SECONDS = 60
+
+
+def _client_ip(request: Request) -> str:
+    # Render (and most proxies) forward the real IP in X-Forwarded-For
+    forwarded = request.headers.get("X-Forwarded-For")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host or "unknown"
+
+
+def _check_rate_limit(ip: str) -> None:
+    now = time.monotonic()
+    if now - _last_request[ip] < RATE_LIMIT_SECONDS:
+        remaining = int(RATE_LIMIT_SECONDS - (now - _last_request[ip]))
+        raise HTTPException(
+            status_code=429,
+            detail=f"Rate limit: one assessment per minute per IP. Try again in {remaining}s.",
+        )
+    _last_request[ip] = now
+
 
 # ── Structured output schema ──────────────────────────────────────────────────
 
@@ -252,7 +279,8 @@ async def health():
 
 
 @app.post("/assess")
-async def assess(request: AssessmentRequest) -> dict[str, Any]:
+async def assess(http_request: Request, request: AssessmentRequest) -> dict[str, Any]:
+    _check_rate_limit(_client_ip(http_request))
     user_message = (
         f"Please assess this AI system under the EU AI Act:\n\n"
         f"COMPANY DESCRIPTION:\n{request.company_description}\n\n"
