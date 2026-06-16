@@ -12,10 +12,12 @@ Regulation (EU) 2024/1689 (the EU AI Act) and generates a one-page readiness map
 
 ```
 Browser (plain HTML)
-        │  POST /assess {company, ai_system, sector, role}
+        │  POST /assess {company, ai_system, sector, role, access_code}
         ▼
 FastAPI (main.py)
-        │  Loads knowledge/eu_ai_act.md into system prompt
+        │  Checks access_code against APP_PASSWORD (if set)        ← access gate
+        │  Checks rate limit (1 req / 60s / IP)
+        │  Loads knowledge/eu_ai_act.md into system prompt          ← cached server-side
         │  Calls Claude API (claude-sonnet-4-6) with forced tool use
         │  Receives structured JSON (6 sections)
         │  Appends to logs/assessments.jsonl   ← audit trail
@@ -28,6 +30,8 @@ static/index.html
         4. Compliance deadlines (in force vs upcoming)
         5. Three concrete next steps
         6. Confidence + information gaps
+        "Download PDF" → POST /export-pdf {assessment JSON} → pdf_export.py
+                          (pure formatting, no extra Claude call)
 ```
 
 ## Setup
@@ -39,6 +43,10 @@ cd eu-ai-act-checker
 pip install -r requirements.txt
 cp .env.example .env       # then open .env and add your Anthropic API key
 ```
+
+**Optional access gate**: set `APP_PASSWORD` in `.env` to require a code before
+`/assess` will run. Leave blank locally; always set it in production (Render env
+vars) so a public URL can't be used to spend your API credits.
 
 ## Run
 
@@ -71,6 +79,9 @@ Run each case through the app and fill in the "Actual output" sections in `tests
 | `knowledge/eu_ai_act.md` in system prompt | Single source of truth; no vector DB needed at this scale |
 | JSONL audit log | Append-only, human-readable, demonstrates auditability by design |
 | Fact vs interpretation labels | Required by compliance best-practice; users know what to verify |
+| Prompt caching on system+tools | Knowledge doc is static — caching cuts ~90% off repeat-call input cost |
+| PDF built from existing JSON | `/export-pdf` formats data already returned — no second Claude call, no extra cost |
+| Password gate, not full auth | One env var, no user accounts/sessions — matches "keep it simple" while still closing the public endpoint |
 
 ## Audit log
 
@@ -79,8 +90,9 @@ Each line is a JSON object with: `timestamp`, `input`, `output`, `model`, `usage
 
 ## Roadmap (v1)
 
+- [x] Auth — access-code gate before `/assess` (v0.2)
+- [x] PDF export — printable readiness report via `/export-pdf` (v0.2)
+- [x] Prompt caching — cuts repeat-call cost on the static knowledge doc (v0.2)
 - [ ] Human-review checkpoint — flag assessments for manual legal sign-off
 - [ ] Decision log viewer — browse past assessments in the UI
-- [ ] PDF export — generate a printable readiness report
 - [ ] Streaming — show classification sections as they arrive
-- [ ] Auth — simple API key gate before exposing externally

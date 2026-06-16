@@ -9,9 +9,11 @@ from typing import Any
 import anthropic
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+
+from pdf_export import build_pdf
 
 load_dotenv()
 
@@ -49,6 +51,18 @@ def _check_rate_limit(ip: str) -> None:
             detail=f"Rate limit: one assessment per minute per IP. Try again in {remaining}s.",
         )
     _last_request[ip] = now
+
+
+# ── Access gate ────────────────────────────────────────────────────────────
+# If APP_PASSWORD is unset, the gate is a no-op (convenient for local dev).
+# Set it in production (e.g. Render env vars) to require an access code.
+
+APP_PASSWORD = os.getenv("APP_PASSWORD", "")
+
+
+def _check_access_code(submitted: str) -> None:
+    if APP_PASSWORD and submitted != APP_PASSWORD:
+        raise HTTPException(status_code=401, detail="Incorrect access code.")
 
 
 # ── Structured output schema ──────────────────────────────────────────────────
@@ -226,7 +240,11 @@ ASSESSMENT_TOOL: dict[str, Any] = {
             "next_steps",
             "confidence"
         ]
-    }
+    },
+    # Marks the cache breakpoint: this tool definition + everything before it
+    # (the system prompt + knowledge doc) gets cached between requests, so
+    # repeat calls only pay full price for the small per-request user message.
+    "cache_control": {"type": "ephemeral"}
 }
 
 SYSTEM_PROMPT = """You are an expert EU AI Act compliance analyst. You assess AI systems
@@ -256,6 +274,21 @@ ACCURACY RULES — non-negotiable:
 EU AI ACT REFERENCE DOCUMENT:
 {knowledge}"""
 
+# Rendered once at startup — this string never changes between requests, which
+# is exactly what makes it a good prompt-cache candidate (see SYSTEM_BLOCKS below).
+_SYSTEM_PROMPT_RENDERED = SYSTEM_PROMPT.format(knowledge=KNOWLEDGE_CONTENT)
+
+# Passing system as a list (instead of a plain string) lets us attach
+# cache_control: Claude caches this whole block server-side for ~5 minutes,
+# so repeat assessments only pay full input price for the short user message.
+SYSTEM_BLOCKS = [
+    {
+        "type": "text",
+        "text": _SYSTEM_PROMPT_RENDERED,
+        "cache_control": {"type": "ephemeral"},
+    }
+]
+
 
 # ── Request / Response models ─────────────────────────────────────────────────
 
@@ -264,6 +297,7 @@ class AssessmentRequest(BaseModel):
     ai_system_description: str
     sector: str
     role: str
+    access_code: str = ""
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
@@ -280,6 +314,7 @@ async def health():
 
 @app.post("/assess")
 async def assess(http_request: Request, request: AssessmentRequest) -> dict[str, Any]:
+    _check_access_code(request.access_code)
     _check_rate_limit(_client_ip(http_request))
     user_message = (
         f"Please assess this AI system under the EU AI Act:\n\n"
@@ -295,7 +330,7 @@ async def assess(http_request: Request, request: AssessmentRequest) -> dict[str,
         response = client.messages.create(
             model="claude-sonnet-4-6",
             max_tokens=4096,
-            system=SYSTEM_PROMPT.format(knowledge=KNOWLEDGE_CONTENT),
+            system=SYSTEM_BLOCKS,
             tools=[ASSESSMENT_TOOL],
             tool_choice={"type": "tool", "name": "submit_readiness_assessment"},
             messages=[{"role": "user", "content": user_message}],
@@ -321,9 +356,23 @@ async def assess(http_request: Request, request: AssessmentRequest) -> dict[str,
         "usage": {
             "input_tokens": response.usage.input_tokens,
             "output_tokens": response.usage.output_tokens,
+            "cache_creation_input_tokens": getattr(response.usage, "cache_creation_input_tokens", 0),
+            "cache_read_input_tokens": getattr(response.usage, "cache_read_input_tokens", 0),
         },
     }
     with open(LOG_PATH, "a", encoding="utf-8") as f:
         f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
 
     return assessment
+
+
+@app.post("/export-pdf")
+async def export_pdf(assessment: dict[str, Any]) -> Response:
+    """Render an already-generated assessment as a downloadable PDF.
+    Takes the JSON the frontend already has — no extra Claude API call."""
+    pdf_bytes = build_pdf(assessment)
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=eu-ai-act-readiness.pdf"},
+    )
