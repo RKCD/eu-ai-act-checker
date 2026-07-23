@@ -73,6 +73,26 @@ ASSESSMENT_TOOL: dict[str, Any] = {
     "input_schema": {
         "type": "object",
         "properties": {
+            "role_analysis": {
+                "type": "object",
+                "description": "Explicit determination of the user's role in the AI value chain.",
+                "properties": {
+                    "determined_role": {
+                        "type": "string",
+                        "enum": ["provider", "deployer", "both", "unclear"],
+                        "description": "provider = develops/places on market; deployer = uses under own authority; both = does both; unclear = description is ambiguous."
+                    },
+                    "reasoning": {
+                        "type": "string",
+                        "description": "Why this role was determined, citing Art 3(3) or 3(4) definitions."
+                    },
+                    "note_if_unclear": {
+                        "type": "string",
+                        "description": "If unclear, what specific information would resolve the ambiguity."
+                    }
+                },
+                "required": ["determined_role", "reasoning"]
+            },
             "in_scope": {
                 "type": "object",
                 "description": "Whether the AI system falls within the territorial and material scope of the EU AI Act.",
@@ -153,9 +173,14 @@ ASSESSMENT_TOOL: dict[str, Any] = {
                         "source_type": {
                             "type": "string",
                             "enum": ["fact_from_act", "interpretation"]
+                        },
+                        "for_role": {
+                            "type": "string",
+                            "enum": ["provider", "deployer", "both"],
+                            "description": "Which role this obligation applies to."
                         }
                     },
-                    "required": ["obligation", "article", "source_type"]
+                    "required": ["obligation", "article", "source_type", "for_role"]
                 }
             },
             "deadlines": {
@@ -233,6 +258,7 @@ ASSESSMENT_TOOL: dict[str, Any] = {
             }
         },
         "required": [
+            "role_analysis",
             "in_scope",
             "risk_classification",
             "key_obligations",
@@ -267,9 +293,22 @@ ACCURACY RULES — non-negotiable:
     interpretation  → you are applying a general rule to this specific system
     mixed           → combination of both
 - When two risk categories could apply, choose the HIGHER one and explain.
-- Today is 2026-06-13. The 2 August 2026 deadline is ~7 weeks away — flag urgency.
-- Tailor obligations strictly to the stated role (provider / deployer / importer /
-  distributor / not sure). "Not sure" → provide obligations for both provider and deployer.
+- Today is 2026-07-23.
+
+GROUNDING RULES — DATES (post-Digital Omnibus 2026, non-negotiable):
+- Art 5 prohibited practices: IN FORCE since 2 February 2025.
+- GPAI obligations: IN FORCE since 2 August 2025.
+- Art 50 transparency (chatbots, deepfakes): 2 AUGUST 2026.
+- HIGH-RISK ANNEX III (standalone AI systems): 2 DECEMBER 2027. NEVER cite 2 August 2026
+  for this — it was deferred by the Digital Omnibus. Citing the wrong date is a material error.
+- High-risk Art 6(1) embedded in products: 2 AUGUST 2028.
+
+ROLE RULES:
+- Determine provider vs deployer from the description using Art 3(3) and 3(4) definitions.
+- If the company both built and uses the system → role is "both"; list obligations for each.
+- If role is unclear → say what information would resolve it; list obligations for both roles.
+- Tailor every obligation to the determined role. Label each obligation's for_role field.
+- Deployer obligations (Art 26/27) are distinct from provider obligations — list both when role is "both".
 
 EU AI ACT REFERENCE DOCUMENT:
 {knowledge}"""

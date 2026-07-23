@@ -7,18 +7,19 @@ the official OJ L 2024/1689 for the definitive legal text.
 
 ---
 
-## KEY DATES (reference: 2026-06-13)
+## KEY DATES (reference: 2026-07-23 · post-Digital Omnibus)
 
 | Date | Event | Status |
 |------|-------|--------|
-| 2 February 2025 | Prohibited practices apply (Article 5) | IN FORCE |
-| 2 August 2025 | GPAI provisions apply (Chapter V, Art 51–56) | IN FORCE |
-| 2 August 2025 | AI Office governance framework applies | IN FORCE |
-| 2 August 2026 | Main application date — most obligations apply | UPCOMING (~7 weeks) |
-| 2 August 2027 | Article 6(1) high-risk embedded in products | UPCOMING |
+| 2 February 2025 | Prohibited practices apply (Article 5); AI literacy obligations | IN FORCE |
+| 2 August 2025 | GPAI provisions apply (Chapter V, Art 51–56); AI Office governance | IN FORCE |
+| 2 August 2026 | Art 50 transparency obligations apply (chatbots, deepfakes, emotion recognition) | UPCOMING |
+| 2 December 2027 | High-risk Annex III standalone AI systems — DEFERRED by Digital Omnibus 2026 | UPCOMING |
+| 2 August 2028 | High-risk Art 6(1) AI embedded in Annex I regulated products | UPCOMING |
 
-The 2 August 2026 deadline is critical: organizations with high-risk Annex III
-AI systems have approximately seven weeks to reach compliance as of the reference date.
+IMPORTANT — Digital Omnibus deferral (2026): The original 2 August 2026 deadline for
+high-risk Annex III systems was deferred to 2 DECEMBER 2027. Never cite 2 August 2026
+as the high-risk Annex III deadline. Art 50 transparency (chatbots) remains 2 August 2026.
 
 ---
 
@@ -180,7 +181,7 @@ path). If notified body is mandatory → Art 6(1) applies.
 ---
 
 ## TIER 2B: HIGH-RISK — ANNEX III STAND-ALONE SYSTEMS (Article 6(2))
-### Application date: 2 August 2026
+### Application date: 2 December 2027 (deferred from original 2 August 2026 by Digital Omnibus, 2026)
 
 Eight domains. Read each carefully — subcategories matter.
 

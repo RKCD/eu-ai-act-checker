@@ -204,6 +204,23 @@
     /* ── Results ── */
     #results { display: none; }
 
+    /* ── Role badges ── */
+    .role-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .role-provider { background: #dbeafe; color: #1e3a8a; }
+    .role-deployer { background: #f3e8ff; color: #4c1d95; }
+    .role-both     { background: #fef9c3; color: #713f12; }
+    .role-unclear  { background: #f1f5f9; color: #475569; }
+
     /* ── Risk Hero ── */
     .risk-hero {
       border-radius: 14px;
@@ -725,6 +742,7 @@
     const risk  = data.risk_classification;
     const scope = data.in_scope;
     const conf  = data.confidence;
+    const role  = data.role_analysis;
 
     const hero = document.getElementById('risk-hero');
     hero.className = 'risk-hero ' + (risk.category || 'unclear');
@@ -742,7 +760,7 @@
     document.getElementById('rh-sub').textContent   = risk.label || '';
 
     const scopeLabel = {
-      yes: '✓ In scope of EU AI Act',
+      yes: '✓ In scope',
       no:  '✗ Out of scope',
       partially: '~ Partially in scope',
     }[scope.verdict] || scope.verdict;
@@ -750,13 +768,20 @@
     const confLabel = '◈ ' +
       (conf.level.charAt(0).toUpperCase() + conf.level.slice(1)) + ' confidence';
 
+    const roleLabel = role ? {
+      provider: '⚙ Provider',
+      deployer: '▶ Deployer',
+      both:     '⚙▶ Provider + Deployer',
+      unclear:  '? Role unclear',
+    }[role.determined_role] || role.determined_role : null;
+
     const critDl = (data.deadlines || []).find(
       d => d.applies_to_this_system && d.status === 'upcoming'
     );
     let cdHtml = '';
     if (critDl) {
       const days = daysUntil(critDl.date);
-      const cls  = days <= 60 ? ' urgent' : '';
+      const cls  = days <= 365 ? ' urgent' : '';
       const txt  = days <= 0
         ? 'Deadline passed'
         : days === 1 ? '1 day until ' + critDl.date
@@ -766,6 +791,7 @@
 
     document.getElementById('rh-pills').innerHTML =
       `<span class="rh-pill">${escHtml(scopeLabel)}</span>` +
+      (roleLabel ? `<span class="rh-pill">${escHtml(roleLabel)}</span>` : '') +
       `<span class="rh-pill">${escHtml(confLabel)}</span>` +
       cdHtml;
   }
@@ -795,6 +821,16 @@
     `;
   }
 
+  function rolePill(for_role) {
+    if (!for_role) return '';
+    const cfg = {
+      provider: ['role-provider', '⚙ Provider'],
+      deployer: ['role-deployer', '▶ Deployer'],
+      both:     ['role-both',     '⚙▶ Both'],
+    }[for_role] || ['role-unclear', for_role];
+    return `<span class="role-pill ${cfg[0]}">${cfg[1]}</span>`;
+  }
+
   function renderObligations(items) {
     if (!items || !items.length) {
       document.getElementById('obligations-content').innerHTML =
@@ -806,6 +842,7 @@
         <div>${escHtml(item.obligation)}</div>
         <div class="obligation-meta">
           <span class="article-pill">${escHtml(item.article)}</span>
+          ${rolePill(item.for_role)}
           ${sourceTag(item.source_type)}
         </div>
       </li>
