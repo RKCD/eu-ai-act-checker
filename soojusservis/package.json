@@ -1,0 +1,20 @@
+{
+  "name": "soojusservis",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^4.16.0",
+    "@astrojs/sitemap": "3.2.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "@cloudflare/workers-types": "^4.20241127.0"
+  }
+}
