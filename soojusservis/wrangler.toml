@@ -1,0 +1,6 @@
+name = "soojusservis"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "dist"
+
+# Resendi API võti seatakse Cloudflare Pages dashboardis
+# (Settings -> Environment variables -> RESEND_API_KEY), mitte siin.
