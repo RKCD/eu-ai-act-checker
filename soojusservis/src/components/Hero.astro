@@ -1,0 +1,215 @@
+---
+import site from '../data/site.json';
+---
+
+<section class="hero wrap">
+  <div class="hero__copy">
+    <p class="eyebrow">Soojussõlmede ja katlamajade hooldus — Tartu</p>
+    <h1>Teie soojussõlm teeb praegu tööd, mida keegi ei jälgi.</h1>
+    <p class="hero__lede">
+      Tagasivool üle normi, vale küttegraafik või ummistunud filter maksavad
+      teie majale igal kuul raha, ilma et keegi seda märkaks. Meie loeme
+      kaugkütte peaarvesti andmeid ja näitame täpselt, kus raha kaob.
+    </p>
+    <div class="hero__cta">
+      <a href="/#kontakt" class="btn btn--primary">Telli tasuta tagasivoolu-audit</a>
+      <a href="/#hinnakiri" class="btn btn--secondary">Vaata hinnakirja</a>
+    </div>
+    <ul class="hero__signals mono">
+      {site.usaldussignaalid.map((signal) => (
+        <li>{signal}</li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="hero__panel">
+    <div class="report">
+      <div class="report__head">
+        <span class="mono report__label">NÄIDISRAPORT</span>
+        <span class="mono report__date">14.08.2026</span>
+      </div>
+
+      <div class="report__temps">
+        <div class="report__temp">
+          <span class="mono report__temp-label">PEALEVOOL</span>
+          <span class="report__temp-value mono">71<span class="report__unit">°C</span></span>
+          <div class="report__bar report__bar--supply"></div>
+        </div>
+        <div class="report__temp">
+          <span class="mono report__temp-label">TAGASIVOOL</span>
+          <span class="report__temp-value mono">47<span class="report__unit">°C</span></span>
+          <div class="report__bar report__bar--return"></div>
+        </div>
+      </div>
+
+      <ul class="report__verdicts">
+        <li>
+          <span class="badge badge--over">Üle normi</span>
+          <span>Tagasivool 63 °C piirist 4 °C kõrgem</span>
+        </li>
+        <li>
+          <span class="badge badge--over">Suvine kulu</span>
+          <span>Juuni–august kulu kaks korda üle ootuse</span>
+        </li>
+        <li>
+          <span class="badge badge--ok">Korras</span>
+          <span>Öine tagasilangus töötab</span>
+        </li>
+      </ul>
+
+      <div class="report__foot">
+        <div>
+          <span class="mono report__foot-label">Hinnanguline ülekulu</span>
+          <span class="report__foot-value mono">~1 940 €/aastas</span>
+        </div>
+        <a href="/#kontakt" class="btn btn--primary btn--small">Telli oma raport</a>
+      </div>
+    </div>
+    <p class="mono report__disclaimer">Näidisandmed — teie raport koostatakse teie maja andmete põhjal.</p>
+  </div>
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 56px;
+    align-items: start;
+    padding: 56px 0 72px;
+  }
+
+  .hero__lede {
+    font-size: 1.05rem;
+    color: var(--ink-2);
+    max-width: 46ch;
+  }
+
+  .hero__cta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 28px 0 32px;
+  }
+
+  .hero__signals {
+    list-style: none;
+    margin: 0;
+    padding: 16px 0 0;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--ink-3);
+  }
+  .hero__signals li::before {
+    content: '— ';
+    color: var(--line-strong);
+  }
+
+  .hero__panel { position: sticky; top: 92px; }
+
+  .report {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .report__head {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+    font-size: 0.75rem;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .report__temps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--line);
+  }
+  .report__temp {
+    background: var(--surface);
+    padding: 20px;
+  }
+  .report__temp-label {
+    display: block;
+    font-size: 0.68rem;
+    color: var(--ink-3);
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+  .report__temp-value {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 2.1rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .report__unit {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ink-3);
+    margin-left: 2px;
+  }
+  .report__bar {
+    height: 4px;
+    border-radius: 2px;
+    margin-top: 10px;
+  }
+  .report__bar--supply { background: var(--supply); }
+  .report__bar--return { background: var(--return); }
+
+  .report__verdicts {
+    list-style: none;
+    margin: 0;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .report__verdicts li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .report__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 20px;
+  }
+  .report__foot-label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--ink-3);
+    letter-spacing: 0.03em;
+  }
+  .report__foot-value {
+    display: block;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--supply);
+  }
+  .btn--small { padding: 9px 14px; font-size: 0.82rem; }
+
+  .report__disclaimer {
+    margin: 10px 2px 0;
+    font-size: 0.72rem;
+    color: var(--ink-3);
+    text-align: center;
+  }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero__panel { position: static; }
+  }
+</style>

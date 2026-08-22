@@ -1,0 +1,52 @@
+---
+import hinnakiri from '../data/hinnakiri.json';
+
+const mid = Math.ceil(hinnakiri.uhekordsedTood.length / 2);
+const left = hinnakiri.uhekordsedTood.slice(0, mid);
+const right = hinnakiri.uhekordsedTood.slice(mid);
+---
+
+<div class="oneoff">
+  <h3>Ühekordsed tööd</h3>
+  <div class="oneoff__grid">
+    <ul class="oneoff__list">
+      {left.map((row: { nimetus: string; hind: string }) => (
+        <li><span>{row.nimetus}</span><span class="mono">{row.hind}</span></li>
+      ))}
+    </ul>
+    <ul class="oneoff__list">
+      {right.map((row: { nimetus: string; hind: string }) => (
+        <li><span>{row.nimetus}</span><span class="mono">{row.hind}</span></li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<style>
+  .oneoff { margin-top: 48px; }
+  .oneoff__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 32px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    padding: 8px 0;
+  }
+  .oneoff__list { list-style: none; margin: 0; padding: 0; }
+  .oneoff__list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 20px;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.9rem;
+  }
+  .oneoff__list li:last-child { border-bottom: none; }
+  .oneoff__list li span:first-child { color: var(--ink-2); }
+  .oneoff__list li span:last-child { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 640px) {
+    .oneoff__grid { grid-template-columns: 1fr; }
+  }
+</style>

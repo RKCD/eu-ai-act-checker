@@ -1,0 +1,68 @@
+---
+import teenused from '../data/teenused.json';
+---
+
+<div class="services">
+  {teenused.map((t) => (
+    <article class="service">
+      <span class="service__number mono">{t.number}</span>
+      <div class="service__body">
+        <h3>{t.title}</h3>
+        <p>{t.description}</p>
+        <ul class="service__list">
+          {t.sisaldab.map((item: string) => <li>{item}</li>)}
+        </ul>
+      </div>
+      <div class="service__data mono">
+        <span class="service__price">{t.hind}</span>
+        <span class="service__time">{t.aeg}</span>
+        <a href={`/teenused/${t.slug}`} class="service__link">Loe lähemalt →</a>
+      </div>
+    </article>
+  ))}
+</div>
+
+<style>
+  .services { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .service {
+    display: grid;
+    grid-template-columns: 64px 1fr 220px;
+    gap: 24px;
+    padding: 32px 24px;
+    background: var(--surface);
+  }
+  .service__number {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--line-strong);
+  }
+  .service__body p { color: var(--ink-2); font-size: 0.95rem; }
+  .service__list {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.85rem;
+    color: var(--ink-2);
+  }
+  .service__list li::before { content: '— '; color: var(--line-strong); }
+  .service__data {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.82rem;
+    align-items: flex-start;
+    padding-top: 4px;
+  }
+  .service__price { font-weight: 700; color: var(--ink); font-size: 0.95rem; }
+  .service__time { color: var(--ink-3); }
+  .service__link { color: var(--supply); text-decoration: none; font-weight: 700; margin-top: 4px; }
+  .service__link:hover { text-decoration: underline; }
+
+  @media (max-width: 760px) {
+    .service { grid-template-columns: 40px 1fr; }
+    .service__data { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; gap: 16px; margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--line); }
+  }
+</style>

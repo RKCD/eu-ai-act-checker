@@ -1,0 +1,81 @@
+---
+import site from '../data/site.json';
+---
+
+<header class="nav">
+  <div class="wrap nav__inner">
+    <a href="/" class="nav__brand">
+      <span class="nav__brand-name">SOOJUSSERVIS</span>
+      <span class="nav__brand-city mono">TARTU</span>
+    </a>
+    <nav class="nav__links" aria-label="Peamenüü">
+      <a href="/#seadus">Mida seadus nõuab</a>
+      <a href="/#teenused">Teenused</a>
+      <a href="/#hinnakiri">Hinnakiri</a>
+      <a href="/#tood">Tehtud tööd</a>
+    </nav>
+    <a href={`tel:${site.telefon.replace(/\s/g, '')}`} class="nav__phone mono">{site.telefon}</a>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    height: 68px;
+  }
+  .nav__brand {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+  .nav__brand-city {
+    font-weight: 700;
+    font-size: 0.7rem;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .nav__links {
+    display: flex;
+    gap: 24px;
+    flex: 1;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .nav__links a {
+    text-decoration: none;
+    color: var(--ink-2);
+  }
+  .nav__links a:hover { color: var(--ink); }
+  .nav__phone {
+    text-decoration: none;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    white-space: nowrap;
+  }
+  .nav__phone:hover { border-color: var(--ink); }
+
+  @media (max-width: 760px) {
+    .nav__links { display: none; }
+  }
+</style>

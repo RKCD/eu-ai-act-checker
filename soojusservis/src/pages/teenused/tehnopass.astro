@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import teenused from '../../data/teenused.json';
+
+const data = teenused.find((t) => t.slug === 'tehnopass')!;
+const title = 'Maja tehnopass — kõik tähtajad ühes kohas | Soojusservis';
+const description = 'Register kõikidest maja tehnosüsteemide tähtaegadest koos meeldetuletustega ja aastakokkuvõttega üldkoosolekule.';
+---
+
+<BaseLayout title={title} description={description} path="/teenused/tehnopass">
+  <article class="section">
+    <div class="wrap wrap--narrow">
+      <p class="eyebrow">Teenus {data.number}</p>
+      <h1>{data.title}</h1>
+      <p class="lede">{data.description}</p>
+
+      <h2>Mis registrisse kantakse</h2>
+      <p>
+        Kõik <a href="/#seadus">tabelis toodud nõuded</a> — soojussõlme surveproov
+        ja aastahooldus, tuleohutuse kontrollid, elektri- ja gaasipaigaldise
+        auditid, energiamärgis — ühe hoone kohta ühes vaates, koos viimase ja
+        järgmise tähtajaga.
+      </p>
+
+      <h2>Mida saate</h2>
+      <ul>
+        {data.sisaldab.map((item: string) => <li>{item}</li>)}
+      </ul>
+
+      <h2>Hind ja aeg</h2>
+      <p class="mono">{data.hind} · {data.aeg}</p>
+
+      <a href="/#kontakt" class="btn btn--primary">Alusta tehnopassiga</a>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .wrap--narrow { max-width: 680px; }
+  .lede { font-size: 1.05rem; color: var(--ink-2); margin-bottom: 32px; }
+  h2 { margin-top: 2em; }
+  li { color: var(--ink-2); margin-bottom: 0.5em; }
+  .btn { margin-top: 32px; }
+</style>

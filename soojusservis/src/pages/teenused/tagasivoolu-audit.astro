@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import teenused from '../../data/teenused.json';
+
+const data = teenused.find((t) => t.slug === 'tagasivoolu-audit')!;
+const title = 'Tagasivoolu-audit — igakuine analüüs kaugkütte andmetest | Soojusservis';
+const description = 'Igakuine automaatne tagasivoolu-audit kaugkütte peaarvesti andmetest. Riistvara ei paigaldata. Esimene raport tasuta.';
+---
+
+<BaseLayout title={title} description={description} path="/teenused/tagasivoolu-audit">
+  <article class="section">
+    <div class="wrap wrap--narrow">
+      <p class="eyebrow">Teenus {data.number}</p>
+      <h1>{data.title}</h1>
+      <p class="lede">{data.description}</p>
+
+      <h2>Mida raport näitab</h2>
+      <ul>
+        <li><strong>Tagasivoolu temperatuur</strong> — võrreldes teie hoonetüübi normiga, keskmine ja tippkoormuse väärtus küttehooajal.</li>
+        <li><strong>Jahutuskraad (ΔT)</strong> — kui suur on vahe pealevoolu ja tagasivoolu vahel ning kas see püsib hooaja jooksul stabiilne.</li>
+        <li><strong>Suvine kulu</strong> — kas juuni–augusti energiakulu vastab sooja vee tootmise vajadusele või on seal kütteosa peidus.</li>
+        <li><strong>Öine tagasilangus</strong> — kas kontroller alandab võimsust öösel, nagu peaks.</li>
+        <li><strong>Küttegraafiku sobivus</strong> — kas võimsus reageerib välisõhu temperatuurile õigesti, ilma liigse viivituseta.</li>
+      </ul>
+
+      <h2>Kuidas see käib</h2>
+      <p>
+        Vajame ligipääsu kaugkütte peaarvesti andmetele — kas otse kaugküttefirma
+        portaalist või teie enda hallatavast kaugloetavast arvestist. Kui teie majal
+        on juba <a href="/nouded/kaugloetav-peaarvesti">kaugloetav peaarvesti</a>,
+        saame analüüsi teha ilma täiendava riistvarata. Lisame andmetele Tartu
+        välisõhu temperatuuri, et hinnata küttegraafiku sobivust.
+      </p>
+
+      <h2>Hind ja aeg</h2>
+      <p class="mono">{data.hind} · {data.aeg}</p>
+
+      <a href="/#kontakt" class="btn btn--primary">Telli tasuta esimene raport</a>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .wrap--narrow { max-width: 680px; }
+  .lede { font-size: 1.05rem; color: var(--ink-2); margin-bottom: 32px; }
+  h2 { margin-top: 2em; }
+  li { color: var(--ink-2); margin-bottom: 0.5em; }
+  .btn { margin-top: 32px; }
+</style>

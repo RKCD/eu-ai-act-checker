@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import teenused from '../../data/teenused.json';
+
+const data = teenused.find((t) => t.slug === 'energiatohususe-hinnang')!;
+const title = 'Ehitusseadustiku § 69³ energiatõhususe hinnang | Soojusservis';
+const description = 'Kohustuslik alates 01.01.2025 hoonetele üle 70 kW. Kirjalik hinnang tehnosüsteemi vastavuse ja parendusvõimaluste kohta.';
+---
+
+<BaseLayout title={title} description={description} path="/teenused/energiatohususe-hinnang">
+  <article class="section">
+    <div class="wrap wrap--narrow">
+      <p class="eyebrow">Teenus {data.number}</p>
+      <h1>{data.title}</h1>
+      <p class="lede">{data.description}</p>
+
+      <h2>Kellele see kohustuslik on</h2>
+      <p>
+        Ehitusseadustiku §-d 69³ ja 69⁴, mis jõustusid 01.01.2025, puudutavad
+        hooneid, mille tehnosüsteemide (küte, jahutus, ventilatsioon)
+        koguvõimsus ületab 70 kW. Enamik korterelamuid ja peaaegu kõik
+        ärihooned jäävad selle piiri sisse.
+      </p>
+
+      <h2>Mida hinnang sisaldab</h2>
+      <ul>
+        {data.sisaldab.map((item: string) => <li>{item}</li>)}
+      </ul>
+
+      <h2>Hind ja aeg</h2>
+      <p class="mono">{data.hind} · {data.aeg}</p>
+
+      <a href="/#kontakt" class="btn btn--primary">Küsi hinnangut</a>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .wrap--narrow { max-width: 680px; }
+  .lede { font-size: 1.05rem; color: var(--ink-2); margin-bottom: 32px; }
+  h2 { margin-top: 2em; }
+  li { color: var(--ink-2); margin-bottom: 0.5em; }
+  .btn { margin-top: 32px; }
+</style>

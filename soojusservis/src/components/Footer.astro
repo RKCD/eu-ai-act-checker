@@ -1,0 +1,53 @@
+---
+import site from '../data/site.json';
+---
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <div>
+      <div class="footer__brand">SOOJUSSERVIS OÜ</div>
+      <p class="mono footer__meta">
+        Registrikood {site.registrikood}<br />
+        {site.aadress}
+      </p>
+    </div>
+    <div class="footer__contact mono">
+      <a href={`mailto:${site.email}`}>{site.email}</a><br />
+      <a href={`tel:${site.telefon.replace(/\s/g, '')}`}>{site.telefon}</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding: 40px 0;
+    background: var(--surface-2);
+  }
+  .footer__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .footer__brand {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .footer__meta {
+    font-size: 0.8rem;
+    color: var(--ink-3);
+    line-height: 1.6;
+  }
+  .footer__contact {
+    font-size: 0.85rem;
+    line-height: 1.8;
+  }
+  .footer__contact a {
+    text-decoration: none;
+    color: var(--ink-2);
+  }
+  .footer__contact a:hover { color: var(--ink); }
+</style>

@@ -1,0 +1,56 @@
+---
+import { getCollection } from 'astro:content';
+
+const entries = (await getCollection('nouded')).sort((a, b) => a.data.order - b.data.order);
+
+const badgeClass = (v: string) =>
+  v === 'jah' ? 'badge--ok' : v === 'osaliselt' ? 'badge--neutral' : 'badge--neutral';
+---
+
+<div class="overflow-x">
+  <table>
+    <thead>
+      <tr>
+        <th>Nõue</th>
+        <th>Alus</th>
+        <th>Intervall</th>
+        <th>Meie katame</th>
+      </tr>
+    </thead>
+    <tbody>
+      {entries.map((entry) => (
+        <tr>
+          <td><a href={`/nouded/${entry.slug}`}>{entry.data.title}</a></td>
+          <td class="req__alus">{entry.data.alus}</td>
+          <td class="mono req__intervall">{entry.data.intervall}</td>
+          <td><span class={`badge ${badgeClass(entry.data.meieKatame)}`}>{entry.data.meieKatameSilt}</span></td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+<p class="mono req__note">
+  Üldistus — täpne nimekiri ja intervallid sõltuvad hoone tüübist, vanusest ja tehnosüsteemidest.
+</p>
+
+<style>
+  .req__alus {
+    color: var(--ink-2);
+    font-size: 0.88rem;
+    max-width: 34ch;
+  }
+  .req__intervall { white-space: nowrap; }
+  table a {
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    font-family: var(--font-display);
+    font-size: 0.92rem;
+  }
+  table a:hover { color: var(--supply); }
+  .req__note {
+    margin: 12px 2px 0;
+    font-size: 0.75rem;
+    color: var(--ink-3);
+  }
+</style>

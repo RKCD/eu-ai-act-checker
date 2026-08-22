@@ -1,0 +1,58 @@
+---
+import '../styles/base.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import site from '../data/site.json';
+
+interface Props {
+  title: string;
+  description: string;
+  path?: string;
+}
+
+const { title, description, path = '/' } = Astro.props;
+const canonical = new URL(path, Astro.site);
+
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: site.arinimi,
+  email: site.email,
+  telephone: site.telefon,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Tartu',
+    addressCountry: 'EE',
+  },
+  areaServed: 'Tartu',
+  url: 'https://soojusservis.ee',
+};
+---
+
+<!doctype html>
+<html lang="et">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="et_EE" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#sisu">Mine põhisisu juurde</a>
+    <Nav />
+    <main id="sisu">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

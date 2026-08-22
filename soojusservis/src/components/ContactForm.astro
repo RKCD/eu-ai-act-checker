@@ -1,0 +1,83 @@
+<form class="contact-form" method="POST" action="/api/kontakt" id="kontakt-vorm">
+  <div class="field">
+    <label for="aadress">Objekti aadress</label>
+    <input type="text" id="aadress" name="aadress" required />
+  </div>
+
+  <div class="field">
+    <label for="hoone_tyyp">Hoone tüüp</label>
+    <select id="hoone_tyyp" name="hoone_tyyp" required>
+      <option value="">Vali...</option>
+      <option value="korterelamu">Korterelamu</option>
+      <option value="arihoone">Ärihoone</option>
+      <option value="tootmishoone">Tootmis- või laohoone</option>
+      <option value="muu">Muu</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="teema">Millega alustada</label>
+    <select id="teema" name="teema" required>
+      <option value="">Vali...</option>
+      <option value="tagasivoolu-audit">Tasuta tagasivoolu-audit</option>
+      <option value="energiatohususe-hinnang">Energiatõhususe hinnang</option>
+      <option value="tehnopass">Maja tehnopass</option>
+      <option value="hooldus">Hoolduspakett</option>
+      <option value="uhekordne-too">Ühekordne töö</option>
+      <option value="muu">Muu</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="kontakt">Kontakt (nimi, telefon või e-post)</label>
+    <input type="text" id="kontakt" name="kontakt" required />
+  </div>
+
+  <div class="field">
+    <label for="lisainfo">Lisainfo</label>
+    <textarea id="lisainfo" name="lisainfo" rows="4"></textarea>
+    <p class="contact-form__hint mono">Kui saate, lisage foto soojussõlmest või peaarvesti näidust — see kiirendab hinnangut.</p>
+  </div>
+
+  <div class="honeypot" aria-hidden="true">
+    <label for="kylastuse_pohjus">Ära täida seda välja</label>
+    <input type="text" id="kylastuse_pohjus" name="kylastuse_pohjus" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <button type="submit" class="btn btn--primary">Saada päring</button>
+  <p class="contact-form__status mono" id="vorm-staatus" role="status"></p>
+</form>
+
+<style>
+  .contact-form { max-width: 480px; }
+  .contact-form__hint { font-size: 0.75rem; color: var(--ink-3); margin-top: 6px; }
+  .contact-form__status { margin-top: 14px; font-size: 0.82rem; }
+</style>
+
+<script>
+  const form = document.getElementById('kontakt-vorm') as HTMLFormElement | null;
+  const status = document.getElementById('vorm-staatus');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!status) return;
+    status.textContent = 'Saadan...';
+
+    const formData = new FormData(form);
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { Accept: 'application/json' },
+      });
+      if (res.ok) {
+        status.textContent = 'Päring saadetud. Võtame ühendust tööpäeva jooksul.';
+        form.reset();
+      } else {
+        status.textContent = 'Midagi läks valesti. Proovi uuesti või helista otse.';
+      }
+    } catch {
+      status.textContent = 'Midagi läks valesti. Proovi uuesti või helista otse.';
+    }
+  });
+</script>

@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import RequirementsTable from '../components/RequirementsTable.astro';
+import ServicesList from '../components/ServicesList.astro';
+import PricingCards from '../components/PricingCards.astro';
+import OneOffPriceList from '../components/OneOffPriceList.astro';
+import AudienceCards from '../components/AudienceCards.astro';
+import PortfolioCards from '../components/PortfolioCards.astro';
+import ContactForm from '../components/ContactForm.astro';
+import site from '../data/site.json';
+
+const title = 'Soojusservis — soojussõlmede ja katlamajade hooldus Tartus';
+const description =
+  'Soojussõlmede ja katlamajade hooldus Tartus. Avaldatud hinnad, tasuta tagasivoolu-audit ja tabel, mis näitab, mida seadus teie majalt nõuab.';
+---
+
+<BaseLayout title={title} description={description} path="/">
+  <Hero />
+
+  <section id="seadus" class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Kohustused</p>
+        <h2>Mida seadus teie majalt nõuab</h2>
+        <p>Kümme kõige levinumat tähtaega, mida korterelamu või ärihoone peab jälgima — koos alusega ja sellega, mida meie katame.</p>
+      </div>
+      <RequirementsTable />
+    </div>
+  </section>
+
+  <section id="teenused" class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Teenused</p>
+        <h2>Kolm asja, millega tavaliselt algab</h2>
+      </div>
+      <ServicesList />
+    </div>
+  </section>
+
+  <section id="hinnakiri" class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Hinnakiri</p>
+        <h2>Hoolduspaketid</h2>
+        <p>Igakuine paketthind. Ühekordsed tööd tunni- või fikseeritud hinnaga allpool.</p>
+      </div>
+      <PricingCards />
+      <OneOffPriceList />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Kellele</p>
+        <h2>Kelle probleemi me lahendame</h2>
+      </div>
+      <AudienceCards />
+    </div>
+  </section>
+
+  <section id="tood" class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Tehtud tööd</p>
+        <h2>Enne ja pärast</h2>
+      </div>
+      <PortfolioCards />
+    </div>
+  </section>
+
+  <section id="kontakt" class="section" style="border-bottom: none;">
+    <div class="wrap kontakt">
+      <div class="kontakt__text">
+        <p class="eyebrow">Kontakt</p>
+        <h2>Esimene tagasivoolu-audit on tasuta</h2>
+        <p>
+          Saada meile oma maja aadress ja kaugkütte peaarvesti andmed, kui need
+          on käepärast — muul juhul aitame need koos kaugküttefirmalt hankida.
+          Vastame tööpäeva jooksul.
+        </p>
+        <p class="mono kontakt__direct">
+          {site.email}<br />
+          {site.telefon}
+        </p>
+      </div>
+      <ContactForm />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .kontakt {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+  }
+  .kontakt__text p { color: var(--ink-2); }
+  .kontakt__direct { margin-top: 20px; line-height: 1.9; color: var(--ink); }
+
+  @media (max-width: 820px) {
+    .kontakt { grid-template-columns: 1fr; }
+  }
+</style>

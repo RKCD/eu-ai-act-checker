@@ -1,0 +1,78 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('nouded');
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const title = `${entry.data.title} — mis see on ja kui tihti tuleb teha | Soojusservis`;
+const description = `${entry.data.title}: alus on ${entry.data.alus}, intervall ${entry.data.intervall}. ${entry.data.kokkuvote}`;
+---
+
+<BaseLayout title={title} description={description} path={`/nouded/${entry.slug}`}>
+  <article class="section req-page">
+    <div class="wrap wrap--narrow">
+      <a href="/#seadus" class="req-page__back mono">← Kõik nõuded</a>
+      <p class="eyebrow">Nõue</p>
+      <h1>{entry.data.title}</h1>
+
+      <dl class="req-page__facts mono">
+        <div>
+          <dt>Alus</dt>
+          <dd>{entry.data.alus}</dd>
+        </div>
+        <div>
+          <dt>Intervall</dt>
+          <dd>{entry.data.intervall}</dd>
+        </div>
+        <div>
+          <dt>Meie katame</dt>
+          <dd>{entry.data.meieKatameSilt}</dd>
+        </div>
+      </dl>
+
+      <div class="req-page__body">
+        <Content />
+      </div>
+
+      <a href="/#kontakt" class="btn btn--primary">Küsi selle kohta pakkumist</a>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .wrap--narrow { max-width: 720px; }
+  .req-page__back { color: var(--ink-3); text-decoration: none; display: inline-block; margin-bottom: 24px; }
+  .req-page__back:hover { color: var(--ink); }
+  .req-page__facts {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 28px;
+    margin: 28px 0 40px;
+    padding: 20px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .req-page__facts dt {
+    font-size: 0.68rem;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .req-page__facts dd { margin: 0; font-weight: 700; font-size: 0.9rem; }
+  .req-page__body :global(h2) { margin-top: 2em; font-size: 1.2rem; }
+  .req-page__body :global(p) { color: var(--ink-2); }
+  .req-page__body { margin-bottom: 40px; }
+
+  @media (max-width: 600px) {
+    .req-page__facts { grid-template-columns: 1fr; gap: 14px; }
+  }
+</style>
