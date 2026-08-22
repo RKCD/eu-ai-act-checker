@@ -1,0 +1,20 @@
+[
+  {
+    "objekt": "Korterelamu, Tartu, Annelinn — 64 korterit",
+    "pealkiri": "Vale küttegraafik viis tagasivoolu pidevalt üle normi",
+    "kirjeldus": "Aastaid seadistamata kontroller hoidis peale- ja tagasivoolu vahet liiga väiksena. Seadistasime graafiku ümber ja vahetasime kuluva ringluspumba.",
+    "tulemus": "Tagasivool 49 °C → 41 °C"
+  },
+  {
+    "objekt": "Ärihoone, Tartu kesklinn — 1200 m²",
+    "pealkiri": "Suvine soojakulu oli kaks korda kõrgem kui vaja",
+    "kirjeldus": "Soojusvaheti oli ummistunud katlakiviga, mistõttu süsteem kompenseeris kütmisega ka suvel. Keemiline pesu ja filtrite vahetus lahendasid probleemi.",
+    "tulemus": "Suvine kulu −53%"
+  },
+  {
+    "objekt": "Korterelamu, Tartu, Karlova — 32 korterit",
+    "pealkiri": "Öine tagasilangus puudus täielikult",
+    "kirjeldus": "Kontrolleril ei olnud kunagi seadistatud öist alandust, mistõttu maja kütis öösel sama intensiivselt kui päeval. Lisasime ajakava ja seadistasime alanduse.",
+    "tulemus": "Küttekulu −18%"
+  }
+]

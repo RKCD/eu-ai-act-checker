@@ -1,0 +1,65 @@
+{
+  "kehtibAlates": "2026-08-01",
+  "kaibemaksuMarkus": "Hinnad on ilma käibemaksuta (KMKR).",
+  "paketid": [
+    {
+      "nimi": "BAAS",
+      "hind": 29,
+      "aastas": 348,
+      "esiletostetud": false,
+      "sisaldub": [
+        "Soojussõlme aastahooldus",
+        "Surveproov vastavalt liitumislepingu tsüklile",
+        "Reageerimisaeg järgmisel tööpäeval",
+        "Ühekordsed tööd tavahinnaga"
+      ],
+      "eiSisaldu": [
+        "Kevadine lisakontroll",
+        "Avariiväljakutse öötasuta"
+      ]
+    },
+    {
+      "nimi": "STANDARD",
+      "hind": 59,
+      "aastas": 708,
+      "esiletostetud": true,
+      "sisaldub": [
+        "Kõik, mis BAAS-paketis",
+        "Kevadine lisakontroll",
+        "Reageerimisaeg samal tööpäeval",
+        "10% soodustus ühekordsetele töödele",
+        "Prioriteetne broneering"
+      ],
+      "eiSisaldu": [
+        "Avariiväljakutse öötasuta"
+      ]
+    },
+    {
+      "nimi": "24H",
+      "hind": 99,
+      "aastas": 1188,
+      "esiletostetud": false,
+      "sisaldub": [
+        "Kõik, mis STANDARD-paketis",
+        "Avariiväljakutse 24/7, garanteeritud reageerimine 2h jooksul",
+        "Kvartaalne ülevaatus",
+        "20% soodustus ühekordsetele töödele"
+      ],
+      "eiSisaldu": []
+    }
+  ],
+  "uhekordsedTood": [
+    { "nimetus": "Töötund (E–R päeval)", "hind": "40 €/h" },
+    { "nimetus": "Töötund (õhtul)", "hind": "65 €/h" },
+    { "nimetus": "Töötund (nädalavahetusel)", "hind": "75 €/h" },
+    { "nimetus": "Avariiväljakutse öösel", "hind": "100 €" },
+    { "nimetus": "Surveproov", "hind": "60–80 €/h" },
+    { "nimetus": "Süsteemi käivitamine", "hind": "60 €/h" },
+    { "nimetus": "Tsirkulatsioonipumba vahetus", "hind": "alates 120 €" },
+    { "nimetus": "Soojusvaheti keemiline pesu", "hind": "alates 340 €" },
+    { "nimetus": "Tasakaalustamine", "hind": "alates 480 €" },
+    { "nimetus": "Termokaamera", "hind": "+40 €/h" },
+    { "nimetus": "Veearvestite vahetus (2 tk)", "hind": "80 €" },
+    { "nimetus": "Sõit väljaspool Tartut", "hind": "0,64 €/km" }
+  ]
+}

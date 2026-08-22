@@ -1,0 +1,42 @@
+[
+  {
+    "number": "01",
+    "slug": "tagasivoolu-audit",
+    "title": "Tagasivoolu-audit",
+    "description": "Igakuine automaatne analüüs kaugkütte peaarvesti andmetest. Riistvara ei paigaldata — kasutame olemasolevat kaugloetavat arvestit. Tulemus on lühike raport, mis näitab, kas maja tagasivool, ΔT ja küttegraafik on normis, ja kui ei ole, siis kui palju see maksab.",
+    "hind": "Esimene tasuta, edasi 15 €/kuu",
+    "aeg": "Esimene raport 5 tööpäeva jooksul andmete laekumisest",
+    "sisaldab": [
+      "Tagasivoolu temperatuuri võrdlus normiga",
+      "ΔT ja suvise kulu analüüs",
+      "Küttegraafiku sobivuse kontroll",
+      "Hinnanguline ülekulu eurodes"
+    ]
+  },
+  {
+    "number": "02",
+    "slug": "energiatohususe-hinnang",
+    "title": "Ehitusseadustiku § 69³ energiatõhususe hinnang",
+    "description": "Kohustus alates 01.01.2025 hoonetele, mille tehnosüsteemide koguvõimsus ületab 70 kW. Hindame süsteemi tervikuna ja anname kirjaliku hinnangu, mida saab kasutada nii nõude täitmise tõendina kui ka aluseks parenduste kavandamisel.",
+    "hind": "Korterelamu 390 €, mitteeluhoone alates 690 €",
+    "aeg": "Hinnang valmib 10 tööpäeva jooksul kohapealsest ülevaatusest",
+    "sisaldab": [
+      "Tehnosüsteemi kohapealne ülevaatus",
+      "Kirjalik hinnang vastavuse kohta",
+      "Parendussoovitused koos hinnangulise maksumusega"
+    ]
+  },
+  {
+    "number": "03",
+    "slug": "tehnopass",
+    "title": "Maja tehnopass",
+    "description": "Kõikide tähtaegade register ühes kohas — surveproovid, hooldused, auditid, energiamärgis. Saadame meeldetuletuse 60 ja 30 päeva enne tähtaega ning koostame aastakokkuvõtte, mille juhatuse liige saab üldkoosolekule kaasa võtta.",
+    "hind": "19 €/kuu",
+    "aeg": "Register valmib esimese nädala jooksul liitumisest",
+    "sisaldab": [
+      "Kõikide tähtaegade register",
+      "Meeldetuletus 60 ja 30 päeva ette",
+      "Aastakokkuvõte üldkoosolekuks"
+    ]
+  }
+]
