@@ -7,19 +7,13 @@ the official OJ L 2024/1689 for the definitive legal text.
 
 ---
 
-## KEY DATES (reference: 2026-07-23 · post-Digital Omnibus)
+## APPLICATION DATES
 
-| Date | Event | Status |
-|------|-------|--------|
-| 2 February 2025 | Prohibited practices apply (Article 5); AI literacy obligations | IN FORCE |
-| 2 August 2025 | GPAI provisions apply (Chapter V, Art 51–56); AI Office governance | IN FORCE |
-| 2 August 2026 | Art 50 transparency obligations apply (chatbots, deepfakes, emotion recognition) | UPCOMING |
-| 2 December 2027 | High-risk Annex III standalone AI systems — DEFERRED by Digital Omnibus 2026 | UPCOMING |
-| 2 August 2028 | High-risk Art 6(1) AI embedded in Annex I regulated products | UPCOMING |
-
-IMPORTANT — Digital Omnibus deferral (2026): The original 2 August 2026 deadline for
-high-risk Annex III systems was deferred to 2 DECEMBER 2027. Never cite 2 August 2026
-as the high-risk Annex III deadline. Art 50 transparency (chatbots) remains 2 August 2026.
+This document does not state application dates. Every date, its legal basis, the
+act that last amended it, and whether it is currently in force live in the
+APPLICATION TIMELINE section of the system prompt (rendered from `legal_corpus.py`)
+and are resolved fresh for every request. Classify which regime applies using the
+substance below; the timeline attaches when it applies.
 
 ---
 
@@ -91,7 +85,7 @@ Use this sequence. Stop at the first match.
 ---
 
 ## TIER 1: PROHIBITED AI PRACTICES (Article 5)
-### In force from 2 February 2025
+### Regime key: art_5_prohibitions (Digital Omnibus additions: art_5_new_prohibitions_omnibus)
 
 All of the following are BANNED throughout the EU:
 
@@ -138,7 +132,7 @@ pattern analysis do not automatically fall here.)
 ---
 
 ## TIER 2A: HIGH-RISK — PRODUCT SAFETY PATH (Article 6(1))
-### Application date: 2 August 2027
+### Regime key: high_risk_annex_i
 
 Conditions for high-risk classification under this path:
 1. The AI system is a **safety component** of a product covered by Annex I
@@ -181,7 +175,7 @@ path). If notified body is mandatory → Art 6(1) applies.
 ---
 
 ## TIER 2B: HIGH-RISK — ANNEX III STAND-ALONE SYSTEMS (Article 6(2))
-### Application date: 2 December 2027 (deferred from original 2 August 2026 by Digital Omnibus, 2026)
+### Regime key: high_risk_annex_iii
 
 Eight domains. Read each carefully — subcategories matter.
 
@@ -258,7 +252,7 @@ classifying as high-risk until legal counsel confirms otherwise.
 ---
 
 ## TIER 3: LIMITED RISK — TRANSPARENCY OBLIGATIONS (Article 50)
-### Application date: 2 August 2026
+### Regime key: art_50_transparency (marking transition for pre-existing systems: art_50_2_marking_legacy)
 
 These systems do not carry the full high-risk compliance burden but must meet
 transparency requirements:
@@ -267,9 +261,16 @@ transparency requirements:
 informs natural persons in real time that they are interacting with an AI system,
 unless this is obvious from context. Deployers have the same obligation.
 
-**Art 50(2) — Deepfakes and synthetic content**: Deployers of AI that generates
-image, audio, or video content that constitutes deep fakes must disclose the
-AI-generated nature. Narrow exception for satire/parody if adequately labeled.
+**Art 50(2) — Deepfakes and synthetic content**: Providers of AI that generates
+synthetic audio, image, video, or text must mark the output in a machine-readable
+format as artificially generated or manipulated; deployers of deepfake content
+must disclose its AI-generated nature. Narrow exception for satire/parody if
+adequately labeled. TRANSITIONAL RELIEF: systems already placed on the market
+before the art_50_transparency regime applies get a separate, later grace period
+for the machine-readable marking duty specifically — regime key
+art_50_2_marking_legacy. Content generated before that regime applied does not
+need to be marked retroactively. Systems placed on the market on or after that
+date are bound by the ordinary art_50_transparency regime with no grace period.
 
 **Art 50(4) — AI-generated text on public-interest topics**: Providers must
 ensure AI-generated text on elections, public health, economics, or similar
@@ -297,7 +298,7 @@ Examples of minimal-risk AI:
 ---
 
 ## GPAI MODELS (Chapter V, Articles 51–56)
-### In force from 2 August 2025
+### Regime key: gpai_obligations
 
 ### Who qualifies as a GPAI provider?
 Organizations that develop, train, and make available a general-purpose AI model —

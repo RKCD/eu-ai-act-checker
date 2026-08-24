@@ -13,6 +13,7 @@ from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+import legal_corpus
 from pdf_export import build_pdf
 
 load_dotenv()
@@ -183,31 +184,30 @@ ASSESSMENT_TOOL: dict[str, Any] = {
                     "required": ["obligation", "article", "source_type", "for_role"]
                 }
             },
-            "deadlines": {
+            "applicable_regimes": {
                 "type": "array",
-                "description": "EU AI Act compliance deadlines relevant to this system.",
+                "description": (
+                    "EU AI Act application-timeline regimes relevant to this system. "
+                    "Select ONLY from the fixed regime keys listed in the APPLICATION "
+                    "TIMELINE section of the system prompt. Never invent a key. The date, "
+                    "legal basis, and in-force status for each regime are attached by code "
+                    "after you respond — you are selecting which regimes apply, not stating "
+                    "when they apply."
+                ),
                 "items": {
                     "type": "object",
                     "properties": {
-                        "date": {
+                        "regime": {
                             "type": "string",
-                            "description": "Date in 'D Month YYYY' format."
+                            "enum": legal_corpus.regime_keys(),
+                            "description": "Regime key from the APPLICATION TIMELINE. Must match one of the listed keys exactly."
                         },
-                        "description": {
+                        "why_relevant": {
                             "type": "string",
-                            "description": "What becomes applicable or required on this date."
-                        },
-                        "status": {
-                            "type": "string",
-                            "enum": ["in_force", "upcoming"],
-                            "description": "in_force = already applies as of 2026-06-13; upcoming = not yet."
-                        },
-                        "applies_to_this_system": {
-                            "type": "boolean",
-                            "description": "Does this deadline specifically apply to the system described?"
+                            "description": "One sentence: why this regime applies to the system described, specifically — not a restatement of the regime's general scope."
                         }
                     },
-                    "required": ["date", "description", "status", "applies_to_this_system"]
+                    "required": ["regime", "why_relevant"]
                 }
             },
             "next_steps": {
@@ -262,7 +262,7 @@ ASSESSMENT_TOOL: dict[str, Any] = {
             "in_scope",
             "risk_classification",
             "key_obligations",
-            "deadlines",
+            "applicable_regimes",
             "next_steps",
             "confidence"
         ]
@@ -293,15 +293,19 @@ ACCURACY RULES — non-negotiable:
     interpretation  → you are applying a general rule to this specific system
     mixed           → combination of both
 - When two risk categories could apply, choose the HIGHER one and explain.
-- Today is 2026-07-23.
 
-GROUNDING RULES — DATES (post-Digital Omnibus 2026, non-negotiable):
-- Art 5 prohibited practices: IN FORCE since 2 February 2025.
-- GPAI obligations: IN FORCE since 2 August 2025.
-- Art 50 transparency (chatbots, deepfakes): 2 AUGUST 2026.
-- HIGH-RISK ANNEX III (standalone AI systems): 2 DECEMBER 2027. NEVER cite 2 August 2026
-  for this — it was deferred by the Digital Omnibus. Citing the wrong date is a material error.
-- High-risk Art 6(1) embedded in products: 2 AUGUST 2028.
+DATES — non-negotiable:
+- You do NOT write dates, legal bases, or in-force status. Select every applicable
+  regime by its exact key from the APPLICATION TIMELINE below, in the
+  applicable_regimes field, with one sentence on why it applies to THIS system.
+  Code attaches the date, legal basis, amending act, and in-force status after
+  you respond — never restate a date yourself, in reasoning text or anywhere else.
+  Refer to regimes by name ("the Annex III high-risk regime"), not by date.
+- Select every regime genuinely relevant to this system — a system can trigger
+  more than one (e.g. both a high-risk regime and a synthetic-content marking
+  regime). If nothing in the timeline applies, return an empty list.
+- Never invent a regime key. If genuinely unsure whether a regime applies, omit
+  it rather than guess — say so in confidence.missing_information instead.
 
 ROLE RULES:
 - Determine provider vs deployer from the description using Art 3(3) and 3(4) definitions.
@@ -310,12 +314,25 @@ ROLE RULES:
 - Tailor every obligation to the determined role. Label each obligation's for_role field.
 - Deployer obligations (Art 26/27) are distinct from provider obligations — list both when role is "both".
 
-EU AI ACT REFERENCE DOCUMENT:
+{regime_block}
+
+EU AI ACT REFERENCE DOCUMENT (classification substance only — Annex III categories,
+Article 5 practices, role definitions, obligations. This document does NOT govern
+dates; dates come exclusively from the APPLICATION TIMELINE above):
 {knowledge}"""
 
 # Rendered once at startup — this string never changes between requests, which
 # is exactly what makes it a good prompt-cache candidate (see SYSTEM_BLOCKS below).
-_SYSTEM_PROMPT_RENDERED = SYSTEM_PROMPT.format(knowledge=KNOWLEDGE_CONTENT)
+# The APPLICATION TIMELINE block is computed against the server's start-up date;
+# a long-lived process can drift stale between restarts (Render's free tier
+# restarts on every cold start, which keeps this fresh in practice). The
+# per-response `deadlines`/`corpus` fields below are always resolved against
+# today's actual date regardless of when the process started — that is what
+# the reader ultimately sees, and it is never stale.
+_SYSTEM_PROMPT_RENDERED = SYSTEM_PROMPT.format(
+    regime_block=legal_corpus.regime_reference_block(),
+    knowledge=KNOWLEDGE_CONTENT,
+)
 
 # Passing system as a list (instead of a plain string) lets us attach
 # cache_control: Claude caches this whole block server-side for ~5 minutes,
@@ -361,7 +378,8 @@ async def assess(http_request: Request, request: AssessmentRequest) -> dict[str,
         f"AI SYSTEM / USE CASE:\n{request.ai_system_description}\n\n"
         f"SECTOR: {request.sector}\n\n"
         f"ROLE IN AI VALUE CHAIN: {request.role}\n\n"
-        "Work through the classification decision tree step by step, then call "
+        "Work through the classification decision tree step by step, select every "
+        "applicable regime from the APPLICATION TIMELINE by key, then call "
         "submit_readiness_assessment with your complete structured assessment."
     )
 
@@ -386,12 +404,40 @@ async def assess(http_request: Request, request: AssessmentRequest) -> dict[str,
 
     assessment: dict[str, Any] = tool_block.input
 
+    # ── Resolve regimes against the corpus ──────────────────────────────────
+    # The model selected regime keys and explained relevance; it never produced
+    # a date. Every date, legal basis, amending act, and in-force status below
+    # comes from legal_corpus, resolved against today — not from the model.
+    selections = assessment.pop("applicable_regimes", [])
+    dropped_keys = legal_corpus.unknown_regimes(selections)
+    resolved = legal_corpus.resolve_all(selections)
+
+    # Shaped to match the frontend's existing `deadlines` contract (date,
+    # description, status, applies_to_this_system) plus provenance fields the
+    # frontend does not render yet (regime, legal_basis, change_note, source_url).
+    assessment["deadlines"] = [
+        {
+            "date": r["date"],
+            "description": r["why_relevant"] or r["applies_to"],
+            "status": r["status"],
+            "applies_to_this_system": True,
+            "regime": r["regime"],
+            "legal_basis": r["legal_basis"],
+            "change_note": r.get("change_note"),
+            "amended_by": r.get("amended_by"),
+            "source_url": r["source"]["url"],
+        }
+        for r in resolved
+    ]
+    assessment["corpus"] = legal_corpus.corpus_metadata()
+
     # Audit log — every assessment is recorded for accountability
     log_entry = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "input": request.model_dump(),
         "output": assessment,
         "model": response.model,
+        "dropped_regime_keys": dropped_keys,
         "usage": {
             "input_tokens": response.usage.input_tokens,
             "output_tokens": response.usage.output_tokens,
