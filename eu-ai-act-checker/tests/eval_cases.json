@@ -1,0 +1,95 @@
+[
+  {
+    "id": "cv_screening_high_risk",
+    "note": "HR/employment CV screening — textbook Annex III §4 example.",
+    "input": {
+      "company_description": "HR startup, 40 employees, Ireland",
+      "ai_system_description": "We screen incoming CVs automatically, ranking candidates by suitability score before a recruiter reviews them.",
+      "sector": "hr_employment",
+      "role": "provider"
+    },
+    "expect": {
+      "risk_category": "high_risk_annex_iii",
+      "role_in": ["provider"],
+      "regimes_required": ["high_risk_annex_iii"],
+      "regime_status": { "high_risk_annex_iii": "upcoming" },
+      "articles_any_contain": ["6(2)"],
+      "min_confidence": "medium"
+    }
+  },
+  {
+    "id": "support_chatbot_limited_risk",
+    "note": "Customer support chatbot — Art 50 transparency. Must resolve as IN FORCE, not upcoming: this is the exact bug (Art 50 mis-flagged as upcoming) the corpus rewrite fixed.",
+    "input": {
+      "company_description": "E-commerce company, 300 employees, Germany",
+      "ai_system_description": "A customer-support chatbot on our website answering product questions.",
+      "sector": "other",
+      "role": "deployer"
+    },
+    "expect": {
+      "risk_category": "limited_risk",
+      "role_in": ["deployer"],
+      "regimes_required": ["art_50_transparency"],
+      "regimes_forbidden": ["high_risk_annex_iii", "high_risk_product_safety"],
+      "regime_status": { "art_50_transparency": "in_force" },
+      "min_confidence": "medium"
+    }
+  },
+  {
+    "id": "social_scoring_prohibited",
+    "note": "Public-sector social scoring — Art 5(1)(c) prohibited practice, in force since 2 Feb 2025.",
+    "input": {
+      "company_description": "Public benefits agency, EU member state",
+      "ai_system_description": "A public agency scores citizens' trustworthiness across services to allocate benefits.",
+      "sector": "public_sector",
+      "role": "deployer"
+    },
+    "expect": {
+      "risk_category": "prohibited",
+      "role_in": ["deployer"],
+      "regimes_required": ["art_5_prohibitions"],
+      "regime_status": { "art_5_prohibitions": "in_force" },
+      "min_confidence": "medium"
+    }
+  },
+  {
+    "id": "legacy_generative_marking",
+    "note": "Generative system already on the market before 2 Aug 2026 — must surface the Art 50(2) transitional grace regime. The pre-corpus version of this tool could not represent this case at all; it is the central point of the LinkedIn post that prompted this rebuild.",
+    "input": {
+      "company_description": "Marketing SaaS, 80 employees, France, product launched in early 2024",
+      "ai_system_description": "An image and video generation tool for marketing content, on the market since early 2024, generates synthetic video and audio ads for customers.",
+      "sector": "other",
+      "role": "provider"
+    },
+    "expect": {
+      "risk_category": "limited_risk",
+      "role_in": ["provider"],
+      "regimes_required": ["art_50_2_marking_legacy"],
+      "min_confidence": "medium"
+    }
+  },
+  {
+    "id": "spam_filter_minimal_risk",
+    "note": "Minimal-risk system with no applicable regime. applicable_regimes must be empty — not padded with baseline-framework regimes the system merely happens not to violate. This pins the prompt fix made alongside this eval suite (previously the model included art_5_prohibitions and enforcement_penalties here even though neither has anything to attach to).",
+    "input": {
+      "company_description": "SaaS email platform, 150 employees, Estonia",
+      "ai_system_description": "Spam filter, classifies incoming emails.",
+      "sector": "other",
+      "role": "provider"
+    },
+    "expect": {
+      "risk_category": "minimal_risk",
+      "role_in": ["provider"],
+      "regimes_required": [],
+      "regimes_forbidden": [
+        "art_5_prohibitions",
+        "enforcement_penalties",
+        "high_risk_annex_iii",
+        "high_risk_product_safety",
+        "art_50_transparency"
+      ],
+      "expect_empty_regimes": true,
+      "min_confidence": "medium"
+    }
+  }
+]

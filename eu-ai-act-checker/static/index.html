@@ -303,6 +303,59 @@
       color: var(--red-text);
     }
 
+    /* ── Deadline provenance (legal basis, change note, source link) ── */
+    .deadline-provenance {
+      margin-top: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--gray-600);
+      line-height: 1.5;
+    }
+    .deadline-provenance .legal-basis { display: block; }
+    .deadline-provenance .change-note {
+      display: block;
+      margin-top: 0.15rem;
+      color: var(--orange-text);
+      font-weight: 600;
+    }
+    .deadline-provenance a {
+      display: inline-block;
+      margin-top: 0.2rem;
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .deadline-provenance a:hover { text-decoration: underline; }
+
+    /* ── Stale-corpus banner ── */
+    .stale-banner {
+      display: none;
+      background: var(--red-bg);
+      border: 1px solid #fca5a5;
+      color: var(--red-text);
+      border-radius: 8px;
+      padding: 0.85rem 1.1rem;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ── Corpus vintage footer ── */
+    .corpus-info {
+      font-size: 0.78rem;
+      color: var(--gray-400);
+      text-align: center;
+      padding: 0.5rem 0 1rem;
+      line-height: 1.7;
+    }
+    .corpus-info a {
+      color: var(--gray-600);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .corpus-info a:hover { text-decoration: underline; }
+
     /* ── Badges ── */
     .section-title {
       font-size: 0.7rem;
@@ -545,6 +598,8 @@
   <!-- ── Results ── -->
   <div id="results">
 
+    <div id="stale-banner" class="stale-banner"></div>
+
     <div style="display:flex;justify-content:flex-end;margin-bottom:0.75rem;">
       <button type="button" id="download-pdf-btn">⬇ Download PDF</button>
     </div>
@@ -616,6 +671,9 @@
       </div>
       <div class="card-body" id="confidence-content"></div>
     </div>
+
+    <!-- Legal corpus provenance -->
+    <div id="corpus-info" class="corpus-info"></div>
 
     <!-- Legal disclaimer -->
     <div class="disclaimer-block">
@@ -696,6 +754,12 @@
   }
 
   /* ── Countdown ── */
+  // Real deadlines in this corpus currently cluster at ~100 days (Art 50(2)
+  // legacy marking) and ~465 days (Annex III high-risk) out — there is nothing
+  // between them. 180 is the cleanest split: it flags the near one as urgent
+  // and leaves the far one calm, without either drifting as dates change.
+  const URGENT_THRESHOLD_DAYS = 180;
+
   function daysUntil(dateStr) {
     const target = new Date(dateStr);
     const today  = new Date();
@@ -707,7 +771,7 @@
     if (days <= 0) {
       return `<span class="countdown-chip urgent">Deadline passed (${Math.abs(days)} days ago)</span>`;
     }
-    const cls = days <= 60 ? ' urgent' : '';
+    const cls = days <= URGENT_THRESHOLD_DAYS ? ' urgent' : '';
     const txt = days === 1 ? '1 day remaining' : `${days} days remaining`;
     return `<span class="countdown-chip${cls}">${txt}</span>`;
   }
@@ -781,7 +845,7 @@
     let cdHtml = '';
     if (critDl) {
       const days = daysUntil(critDl.date);
-      const cls  = days <= 365 ? ' urgent' : '';
+      const cls  = days <= URGENT_THRESHOLD_DAYS ? ' urgent' : '';
       const txt  = days <= 0
         ? 'Deadline passed'
         : days === 1 ? '1 day until ' + critDl.date
@@ -852,19 +916,37 @@
   function renderDeadlines(items) {
     if (!items || !items.length) {
       document.getElementById('deadlines-content').innerHTML =
-        '<li style="color:#94a3b8;font-size:.9rem;">No deadlines identified.</li>';
+        '<li style="color:#94a3b8;font-size:.9rem;">No application-timeline regime applies to this system.</li>';
       return;
     }
     document.getElementById('deadlines-content').innerHTML = items.map(item => {
       const days = item.applies_to_this_system && item.status === 'upcoming'
         ? daysUntil(item.date) : null;
       const chip = days !== null ? countdownChip(days, item.date) : '';
+
+      const provenanceParts = [];
+      if (item.legal_basis) {
+        provenanceParts.push(`<span class="legal-basis">${escHtml(item.legal_basis)}</span>`);
+      }
+      if (item.change_note) {
+        provenanceParts.push(`<span class="change-note">↻ ${escHtml(item.change_note)}</span>`);
+      }
+      if (item.source_url) {
+        provenanceParts.push(
+          `<a href="${escHtml(item.source_url)}" target="_blank" rel="noopener noreferrer">↗ Official Journal</a>`
+        );
+      }
+      const provenance = provenanceParts.length
+        ? `<div class="deadline-provenance">${provenanceParts.join('')}</div>`
+        : '';
+
       return `
         <li class="deadline-item ${item.applies_to_this_system ? '' : 'not-applicable'}">
           <div class="deadline-date">${escHtml(item.date)}</div>
           <div class="deadline-main">
             <div class="deadline-text">${escHtml(item.description)}</div>
             ${chip}
+            ${provenance}
           </div>
           <div class="deadline-badges">
             ${badge(item.status === 'in_force' ? 'In force' : 'Upcoming', item.status)}
@@ -873,6 +955,34 @@
         </li>
       `;
     }).join('');
+  }
+
+  function renderStaleBanner(corpus) {
+    const el = document.getElementById('stale-banner');
+    if (corpus && corpus.is_stale) {
+      el.textContent =
+        `⚠ This assessment's legal corpus was last verified ${corpus.age_days} days ago ` +
+        `(${corpus.verified_on}) — it may not reflect amendments since then. Verify these ` +
+        `dates against the Official Journal before relying on them.`;
+      el.style.display = 'block';
+    } else {
+      el.style.display = 'none';
+      el.textContent = '';
+    }
+  }
+
+  function renderCorpusInfo(corpus) {
+    const el = document.getElementById('corpus-info');
+    if (!corpus) { el.innerHTML = ''; return; }
+
+    const instrumentLinks = (corpus.instruments || [])
+      .map(inst => `<a href="${escHtml(inst.url)}" target="_blank" rel="noopener noreferrer">${escHtml(inst.short_name || inst.citation)}</a>`)
+      .join(' · ');
+
+    el.innerHTML = `
+      <div>Legal corpus verified ${escHtml(corpus.verified_on)} · assessed against ${escHtml(corpus.assessed_on)}</div>
+      <div>${instrumentLinks}</div>
+    `;
   }
 
   function renderSteps(items) {
@@ -909,6 +1019,7 @@
   }
 
   function renderResults(data) {
+    renderStaleBanner(data.corpus);
     renderHero(data);
     renderScope(data.in_scope);
     renderRisk(data.risk_classification);
@@ -916,6 +1027,7 @@
     renderDeadlines(data.deadlines);
     renderSteps(data.next_steps);
     renderConfidence(data.confidence);
+    renderCorpusInfo(data.corpus);
     // Scope + risk reasoning collapsed by default; others open
     initCollapsible('header-scope',       null, false);
     initCollapsible('header-risk',        null, false);

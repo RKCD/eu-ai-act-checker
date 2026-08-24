@@ -304,6 +304,16 @@ DATES — non-negotiable:
 - Select every regime genuinely relevant to this system — a system can trigger
   more than one (e.g. both a high-risk regime and a synthetic-content marking
   regime). If nothing in the timeline applies, return an empty list.
+- A regime belongs in applicable_regimes ONLY if this system currently has, or
+  will have, an obligation or restriction under it. Checking a regime during
+  classification and ruling it out does NOT make it applicable — do not include
+  art_5_prohibitions just because you confirmed no prohibition applies; include
+  it only if this system IS a prohibited practice, or there is a genuine,
+  documented borderline risk under it (reflected in confidence.missing_information).
+- Include enforcement_penalties ONLY alongside at least one other obligation-
+  bearing regime, never on its own. A minimal-risk system with no other regime
+  selected has nothing for penalties to attach to — its applicable_regimes list
+  must be empty, not just "no high-risk regime found."
 - Never invent a regime key. If genuinely unsure whether a regime applies, omit
   it rather than guess — say so in confidence.missing_information instead.
 
