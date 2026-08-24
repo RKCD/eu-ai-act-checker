@@ -55,15 +55,45 @@ def _check_rate_limit(ip: str) -> None:
 
 
 # ── Access gate ────────────────────────────────────────────────────────────
-# If APP_PASSWORD is unset, the gate is a no-op (convenient for local dev).
-# Set it in production (e.g. Render env vars) to require an access code.
+# Two layers, both optional and independent:
+#   APP_PASSWORD  — one always-valid code, meant for the owner's own testing.
+#   ACCESS_CODES  — a JSON object of {code: recipient label}, one code per
+#                   person invited to use the tool. A shared password cannot
+#                   attribute a query to anyone; per-recipient codes can.
+# If neither is set, the gate is a no-op (convenient for local dev). Setting
+# ACCESS_CODES to invalid JSON fails at startup rather than silently
+# disabling the gate — a broken env var should crash the deploy, not quietly
+# let every request through.
 
 APP_PASSWORD = os.getenv("APP_PASSWORD", "")
 
 
-def _check_access_code(submitted: str) -> None:
-    if APP_PASSWORD and submitted != APP_PASSWORD:
-        raise HTTPException(status_code=401, detail="Incorrect access code.")
+def _load_access_codes() -> dict[str, str]:
+    raw = os.getenv("ACCESS_CODES", "")
+    if not raw:
+        return {}
+    try:
+        codes = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"ACCESS_CODES env var is set but not valid JSON: {exc}") from exc
+    if not isinstance(codes, dict):
+        raise RuntimeError("ACCESS_CODES must be a JSON object of {code: recipient label}")
+    return {str(k): str(v) for k, v in codes.items()}
+
+
+ACCESS_CODES: dict[str, str] = _load_access_codes()
+
+
+def _check_access_code(submitted: str) -> str:
+    """Returns the recipient label for this code (for the audit log), or
+    raises 401. When no gate is configured, every request is unattributed."""
+    if not APP_PASSWORD and not ACCESS_CODES:
+        return "unattributed (no access gate configured)"
+    if APP_PASSWORD and submitted == APP_PASSWORD:
+        return "owner"
+    if submitted in ACCESS_CODES:
+        return ACCESS_CODES[submitted]
+    raise HTTPException(status_code=401, detail="Incorrect access code.")
 
 
 # ── Structured output schema ──────────────────────────────────────────────────
@@ -380,7 +410,7 @@ async def health():
 
 @app.post("/assess")
 async def assess(http_request: Request, request: AssessmentRequest) -> dict[str, Any]:
-    _check_access_code(request.access_code)
+    recipient = _check_access_code(request.access_code)
     _check_rate_limit(_client_ip(http_request))
     user_message = (
         f"Please assess this AI system under the EU AI Act:\n\n"
@@ -441,10 +471,16 @@ async def assess(http_request: Request, request: AssessmentRequest) -> dict[str,
     ]
     assessment["corpus"] = legal_corpus.corpus_metadata()
 
-    # Audit log — every assessment is recorded for accountability
+    # Audit log — every assessment is recorded for accountability.
+    # access_code is stripped from the logged input: recipient (the label it
+    # resolved to) is the useful, non-sensitive fact; the raw code is a
+    # working credential and has no reason to persist in a log file.
+    log_input = request.model_dump()
+    log_input.pop("access_code", None)
     log_entry = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "input": request.model_dump(),
+        "recipient": recipient,
+        "input": log_input,
         "output": assessment,
         "model": response.model,
         "dropped_regime_keys": dropped_keys,

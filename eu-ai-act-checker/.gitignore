@@ -1,6 +1,9 @@
 # Environment — never commit credentials
 .env
 
+# Per-recipient access codes — these are live credentials, not source
+access_codes.local.json
+
 # Audit logs — keep locally, may contain personal data
 logs/
 

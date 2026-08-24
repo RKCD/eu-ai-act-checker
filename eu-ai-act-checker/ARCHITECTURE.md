@@ -156,11 +156,28 @@ should not mutate without a human reading the text. Note that
 `eur-lex.europa.eu/eli/...` returns empty to plain fetches; the
 `legal-content/EN/TXT/HTML/?uri=OJ%3A...` form is the fetchable one.
 
-### 6. Per-recipient access codes
+### 6. Per-recipient access codes — DONE, 2026-08-24.
 
-One shared password cannot attribute a query to a person, which is what the
-twenty-conversations plan needs. Move to per-recipient codes with a label, and
-record the label in the audit log.
+`APP_PASSWORD` stays as the owner's own always-valid code (logged as
+`"owner"`). New `ACCESS_CODES` env var — a JSON object of `{code: label}` —
+adds one code per invited person; `_check_access_code` now returns the
+resolved label, and `/assess` records it as `recipient` in the audit log
+instead of the raw code (the raw code is stripped from the logged input —
+it's a working credential, it has no reason to persist in a log file).
+Malformed `ACCESS_CODES` JSON fails loudly at startup rather than silently
+disabling the gate.
+
+No server-side store for codes — they live only in Render's `ACCESS_CODES`
+env var. `scripts/new_access_code.py` keeps a local working copy
+(`access_codes.local.json`, gitignored — it holds live credentials) so
+minting a new code doesn't mean reconstructing the whole JSON blob by hand;
+it prints the updated JSON to paste into Render. To revoke a code, delete its
+entry from that local file and re-run the script to get the updated JSON.
+
+Verified: gate logic unit-tested directly (valid recipient code, owner code,
+invalid code, malformed-JSON startup failure) — no Claude call needed since
+the gate runs before the API call. Not yet exercised end-to-end against a
+live per-recipient code in production; do that once a real code is issued.
 
 ## Rules for anyone editing this
 
