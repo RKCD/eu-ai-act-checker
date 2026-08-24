@@ -17,6 +17,14 @@
   --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
 
   --radius: 3px;
+  --radius-lg: 5px;
+
+  --shadow-sm: 0 1px 2px rgba(18, 26, 25, 0.05);
+  --shadow-md: 0 6px 16px rgba(18, 26, 25, 0.08), 0 1px 3px rgba(18, 26, 25, 0.05);
+  --shadow-lg: 0 16px 40px rgba(18, 26, 25, 0.14), 0 3px 8px rgba(18, 26, 25, 0.07);
+  --shadow-featured: 0 20px 44px rgba(196, 85, 29, 0.16), 0 3px 10px rgba(196, 85, 29, 0.12);
+
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -33,6 +41,11 @@
     --supply-soft: #332016;
     --return: #3AAB9C;
     --return-soft: #132A28;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5), 0 3px 8px rgba(0, 0, 0, 0.3);
+    --shadow-featured: 0 20px 44px rgba(238, 128, 70, 0.18), 0 3px 10px rgba(238, 128, 70, 0.14);
   }
 }
 
@@ -49,4 +62,9 @@
   --supply-soft: #332016;
   --return: #3AAB9C;
   --return-soft: #132A28;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5), 0 3px 8px rgba(0, 0, 0, 0.3);
+  --shadow-featured: 0 20px 44px rgba(238, 128, 70, 0.18), 0 3px 10px rgba(238, 128, 70, 0.14);
 }

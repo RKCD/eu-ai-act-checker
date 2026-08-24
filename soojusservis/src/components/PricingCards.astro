@@ -5,17 +5,19 @@ import hinnakiri from '../data/hinnakiri.json';
 <div class="pricing">
   {hinnakiri.paketid.map((p) => (
     <article class={`price-card ${p.esiletostetud ? 'price-card--featured' : ''}`}>
-      {p.esiletostetud && <span class="price-card__flag mono">Enim valitud</span>}
-      <h3>{p.nimi}</h3>
-      <div class="price-card__price mono">
-        {p.hind}<span class="price-card__unit">€/kuu</span>
+      {p.esiletostetud && <div class="price-card__ribbon mono">Enim valitud</div>}
+      <div class="price-card__body">
+        <h3>{p.nimi}</h3>
+        <div class="price-card__price mono">
+          {p.hind}<span class="price-card__unit">€/kuu</span>
+        </div>
+        <p class="mono price-card__year">{p.aastas} €/aastas</p>
+        <ul class="price-card__list">
+          {p.sisaldub.map((item: string) => <li>{item}</li>)}
+          {p.eiSisaldu.map((item: string) => <li class="is-off">{item}</li>)}
+        </ul>
+        <a href="/#kontakt" class={`btn ${p.esiletostetud ? 'btn--primary' : 'btn--secondary'} price-card__cta`}>Küsi pakkumist</a>
       </div>
-      <p class="mono price-card__year">{p.aastas} €/aastas</p>
-      <ul class="price-card__list">
-        {p.sisaldub.map((item: string) => <li>{item}</li>)}
-        {p.eiSisaldu.map((item: string) => <li class="is-off">{item}</li>)}
-      </ul>
-      <a href="/#kontakt" class={`btn ${p.esiletostetud ? 'btn--primary' : 'btn--secondary'} price-card__cta`}>Küsi pakkumist</a>
     </article>
   ))}
 </div>
@@ -34,29 +36,35 @@ import hinnakiri from '../data/hinnakiri.json';
   .price-card {
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 28px 24px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
-    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
   }
+  .price-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+
+  .price-card__body { padding: 28px 24px; display: flex; flex-direction: column; flex: 1; }
+
   .price-card--featured {
     border-color: var(--supply);
-    box-shadow: 0 0 0 1px var(--supply);
+    box-shadow: var(--shadow-featured);
+    background: linear-gradient(180deg, var(--supply-soft) 0%, var(--surface) 140px);
   }
-  .price-card__flag {
-    position: absolute;
-    top: -11px;
-    left: 24px;
+  .price-card--featured:hover { transform: translateY(-5px); box-shadow: var(--shadow-featured); }
+
+  .price-card__ribbon {
     background: var(--supply);
     color: #fff;
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: var(--radius);
+    text-align: center;
+    padding: 8px;
   }
+
   .price-card__price {
     font-family: var(--font-display);
     font-weight: 800;
@@ -64,6 +72,7 @@ import hinnakiri from '../data/hinnakiri.json';
     color: var(--ink);
     margin: 8px 0 0;
   }
+  .price-card--featured .price-card__price { color: var(--supply); }
   .price-card__unit {
     font-family: var(--font-mono);
     font-weight: 400;
@@ -82,19 +91,26 @@ import hinnakiri from '../data/hinnakiri.json';
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     font-size: 0.88rem;
     flex: 1;
   }
-  .price-card__list li::before { content: '— '; color: var(--return); }
-  .price-card__list li.is-off {
-    color: var(--ink-3);
+  .price-card__list li { position: relative; padding-left: 22px; color: var(--ink-2); }
+  .price-card__list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-weight: 700;
+    color: var(--return);
   }
-  .price-card__list li.is-off::before { content: '— '; color: var(--line-strong); }
+  .price-card__list li.is-off { color: var(--ink-3); }
+  .price-card__list li.is-off::before { content: '–'; color: var(--line-strong); }
   .price-card__cta { justify-content: center; }
 
   @media (max-width: 820px) {
     .pricing { grid-template-columns: 1fr; }
+    .price-card--featured { order: -1; }
   }
 </style>
 

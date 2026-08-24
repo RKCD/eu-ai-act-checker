@@ -85,7 +85,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .overflow-x {
   overflow-x: auto;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 /* buttons */
@@ -109,20 +110,45 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   background: var(--supply);
   color: #FFFFFF;
   border-color: var(--supply);
+  box-shadow: 0 2px 8px rgba(196, 85, 29, 0.28);
+  transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease),
+    transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
 }
-.btn--primary:hover { background: color-mix(in srgb, var(--supply) 88%, black); }
+.btn--primary:hover {
+  background: color-mix(in srgb, var(--supply) 88%, black);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(196, 85, 29, 0.34);
+}
+.btn--primary:active { transform: translateY(0); box-shadow: 0 2px 6px rgba(196, 85, 29, 0.28); }
 
 .btn--secondary {
   background: transparent;
   color: var(--ink);
   border-color: var(--line-strong);
+  transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease), transform 0.15s var(--ease);
 }
-.btn--secondary:hover { border-color: var(--ink); background: var(--surface-2); }
+.btn--secondary:hover { border-color: var(--ink); background: var(--surface-2); transform: translateY(-1px); }
+.btn--secondary:active { transform: translateY(0); }
+
+/* cards */
+.card-surface {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease), border-color 0.18s var(--ease);
+}
+.card-surface--interactive:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--line-strong);
+}
 
 /* badges */
 .badge {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 700;
@@ -131,9 +157,18 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   padding: 3px 8px;
   border-radius: var(--radius);
 }
+.badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
 .badge--over { background: var(--supply-soft); color: var(--supply); }
 .badge--ok { background: var(--return-soft); color: var(--return); }
 .badge--neutral { background: var(--surface-2); color: var(--ink-3); }
+.badge--neutral::before { display: none; }
 
 /* tables */
 table {
@@ -159,6 +194,7 @@ thead th {
   background: var(--surface-2);
 }
 tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background-color 0.12s var(--ease); }
 tbody tr:hover { background: var(--surface-2); }
 
 /* forms */
@@ -180,6 +216,14 @@ input, select, textarea {
   border: 1px solid var(--line-strong);
   border-radius: var(--radius);
   padding: 11px 14px;
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--supply);
+  box-shadow: 0 0 0 3px var(--supply-soft);
+}
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: none;
 }
 .field { margin-bottom: 20px; }
 .honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }

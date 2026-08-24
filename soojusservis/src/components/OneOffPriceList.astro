@@ -29,7 +29,8 @@ const right = hinnakiri.uhekordsedTood.slice(mid);
     grid-template-columns: 1fr 1fr;
     gap: 0 32px;
     border: 1px solid var(--line);
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     background: var(--surface);
     padding: 8px 0;
   }
@@ -41,10 +42,12 @@ const right = hinnakiri.uhekordsedTood.slice(mid);
     padding: 11px 20px;
     border-bottom: 1px solid var(--line);
     font-size: 0.9rem;
+    transition: background-color 0.12s var(--ease);
   }
+  .oneoff__list li:hover { background: var(--surface-2); }
   .oneoff__list li:last-child { border-bottom: none; }
   .oneoff__list li span:first-child { color: var(--ink-2); }
-  .oneoff__list li span:last-child { color: var(--ink); font-weight: 700; }
+  .oneoff__list li span:last-child { color: var(--supply); font-weight: 700; }
 
   @media (max-width: 640px) {
     .oneoff__grid { grid-template-columns: 1fr; }
