@@ -107,27 +107,46 @@ Specifically wrong today: Art 50 marked `UPCOMING` (it has applied since
 2 August 2026); the Art 50(2) transitional grace period is absent; the key-dates
 table duplicates what the corpus now owns.
 
-### 3. Eval harness
+### 3. Eval harness — DONE (partially verified), 2026-08-24, commit 3a2b5db.
 
-`tests/eval_cases.json` + `tests/run_evals.py`. One command, exit non-zero on
-failure, per-case assertions on `risk_classification.category`,
-`role_analysis.determined_role`, the resolved regime keys, and required articles.
+`tests/eval_cases.json` + `tests/run_evals.py`, run with
+`python tests/run_evals.py` from the repo root. Runs in-process via Starlette's
+TestClient (no server needed), real Claude API calls, distinct
+`X-Forwarded-For` per case to dodge the per-IP rate limiter. Asserts risk
+category, role, required/forbidden regime keys, per-regime status, article
+substrings, minimum confidence, corpus staleness, and that no regime key was
+dropped as unknown.
 
-Minimum cases: CV screening (high-risk Annex III / provider / annex III regime);
-support chatbot (limited risk / deployer / art_50_transparency, and it must come
-back **in force**, not upcoming); social scoring by a public body (prohibited /
-art_5_prohibitions); a generative system on the market before 2 August 2026
-(must surface `art_50_2_marking_legacy`); spam filter (minimal risk, no regimes).
+Building it caught a real bug before any case ran: the model was including
+`art_5_prohibitions` and `enforcement_penalties` in `applicable_regimes` for
+minimal-risk systems just because it had checked and ruled them out, not
+because either had anything to attach to. Fixed in the prompt (see main.py's
+DATES rules) and pinned as the `spam_filter_minimal_risk` case.
 
-Assert the *regime key*, not the date string. Dates live in the corpus; the eval
-checks that the model routed to the right regime.
+First run: 3/5 passed clean, including the two most load-bearing checks (Art 50
+resolves `in_force`; the prohibited-practice path resolves correctly). The
+other 2 hit an Anthropic billing wall mid-run (account out of credit) — a
+harness/infra issue, not a logic failure; the harness correctly told the two
+failure modes apart (HTTP 502 from billing vs. an assertion failure) and
+exited 1 either way. **Re-run once credits are topped up** to get a clean 5/5
+before treating this as a passing baseline.
 
-### 4. Frontend provenance
+### 4. Frontend provenance — DONE, 2026-08-24, commit 3a2b5db.
 
-Show, per deadline: legal basis, `change_note` where present, and a link to the
-instrument. Show corpus vintage on the result. Render `is_stale` as a visible
-banner. Countdown urgency currently triggers under 365 days — reconsider now
-that the nearest real deadline is 100 days out and the far one is 465.
+Each deadline card now shows its legal basis, `change_note` where the corpus
+records one, and a link to the source instrument. A stale-corpus banner
+renders prominently when `corpus.is_stale`. A corpus vintage footer (verified
+date, assessed date, linked instruments) is always shown. Countdown urgency
+threshold unified at 180 days (was inconsistently 60 in the per-deadline chip
+and 365 in the hero pill — both left over from before the corpus rewrite,
+neither matched the real deadline spread of ~100 and ~465 days).
+
+Verified by injecting a synthetic assessment via `javascript_tool` against the
+static file (API credits were exhausted at the time) — confirmed the stale
+banner, both countdown urgency states, the provenance block, and the corpus
+footer all render correctly. Not yet re-verified end-to-end against a live
+`/assess` response — do that once credits are back, ideally as part of the
+eval re-run.
 
 ### 5. Freshness watcher
 
