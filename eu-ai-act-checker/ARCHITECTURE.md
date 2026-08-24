@@ -148,13 +148,59 @@ response rendered in the actual page (the eval suite exercises the JSON shape,
 not the DOM) — reasonable to do once, but low risk since the JSON shape is
 identical to what was injected.
 
-### 5. Freshness watcher
+### 5. Freshness watcher — DONE, 2026-08-24, but not as originally scoped.
 
-Scheduled check against EUR-Lex for acts amending 2024/1689 later than
-`CORPUS_VERIFIED_ON`. It should notify, not auto-edit — a regulatory corpus
-should not mutate without a human reading the text. Note that
-`eur-lex.europa.eu/eli/...` returns empty to plain fetches; the
-`legal-content/EN/TXT/HTML/?uri=OJ%3A...` form is the fetchable one.
+Originally planned as a plain scheduled script hitting EUR-Lex directly. That
+doesn't work: EUR-Lex sits behind an AWS WAF bot challenge (confirmed via
+curl — every request gets `202 Accepted` with `x-amzn-waf-action: challenge`,
+regardless of User-Agent), so no headless HTTP client can read it. Building a
+scraper that silently reported "no changes" against a blocked request would
+have been worse than no watcher at all — false confidence beats no watcher.
+
+What's running instead: a scheduled Claude Code cloud routine (via the
+`RemoteTrigger` API / `schedule` skill), **"EU AI Act corpus freshness
+check"**, `trig_01EdKDTyYY7vZna4kAt3H4rW`, cron `0 7 1 * *` (1st of month,
+07:00 UTC). Each run: reads `legal_corpus.py` from the repo, researches via
+`WebSearch`/`WebFetch` whether anything new amends Regulation (EU) 2024/1689,
+and — critically — has only `WebFetch`/`WebSearch` in its tool allowlist, no
+`Write`/`Edit`, so it is structurally incapable of touching the corpus. It
+reports findings in its final message; on a real finding it also fires a
+mobile push notification (via a `PushNotification` tool that turned out to be
+available in the CCR sandbox regardless of the configured allowlist).
+
+Turns out the CCR sandbox's network egress is *more* restricted than my own
+session's: `WebFetch` got `EGRESS_BLOCKED` against eur-lex.europa.eu **and**
+every law-firm domain tried (whitecase.com, klgates.com, aiactblog.nl) in
+testing — not a EUR-Lex-specific block, closer to a general external-fetch
+wall. `WebSearch` still works and returns real snippets, so the routine's
+actual method is: search, cross-reference the returned snippets across as
+many independent secondary sources as it can find (law firm alerts,
+specialist trackers, official press releases), and only conclude something
+if several independent sources agree — never on a single source, and never
+by reading the primary text.
+
+**What this means in practice:** the check is "convergent secondary-source
+monitoring," not "reads the Official Journal." Verified this actually
+detects a real change, not just runs without error: created a one-off test
+routine with an *empty* known-acts set and a `CORPUS_VERIFIED_ON` set before
+2026/1744 existed, ran it, and it correctly found 2026/1744 via ~8
+independent secondary sources, got the citation/dates/substance right, and
+pushed a notification — all despite every direct `WebFetch` in that run being
+blocked too. Test routine disabled after review
+(`trig_01VwizvzArTprVqeGXTTKu1o` — Robert can delete it at
+claude.ai/code/routines; the API has no delete).
+
+**Known gap:** the routine only notifies on a finding (Outcome B). On "nothing
+new" (Outcome A) or "couldn't determine" (Outcome C) it ends quietly — so
+silence is ambiguous between "checked, nothing new" and "silently failed to
+run" (GitHub access lapsing again, a billing block, etc.). Confirm it's alive
+via claude.ai/code/routines (shows `last_fired_at`, `next_run_at`) or by
+asking a future Claude Code session to pull `RemoteTrigger action:list_runs`
+for the trigger ID above. A cheap fix worth considering: have it always push a
+one-line monthly heartbeat even on Outcome A, trading one low-urgency
+notification a month for a positive "it's alive" signal — not done, since it
+changes the notification cadence and that's Robert's call, not an
+architecture default.
 
 ### 6. Per-recipient access codes — DONE, 2026-08-24.
 
