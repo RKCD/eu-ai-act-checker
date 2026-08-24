@@ -123,13 +123,12 @@ minimal-risk systems just because it had checked and ruled them out, not
 because either had anything to attach to. Fixed in the prompt (see main.py's
 DATES rules) and pinned as the `spam_filter_minimal_risk` case.
 
-First run: 3/5 passed clean, including the two most load-bearing checks (Art 50
-resolves `in_force`; the prohibited-practice path resolves correctly). The
-other 2 hit an Anthropic billing wall mid-run (account out of credit) — a
-harness/infra issue, not a logic failure; the harness correctly told the two
-failure modes apart (HTTP 502 from billing vs. an assertion failure) and
-exited 1 either way. **Re-run once credits are topped up** to get a clean 5/5
-before treating this as a passing baseline.
+First run: 3/5 passed clean; the other 2 hit an Anthropic billing wall mid-run
+(account out of credit), not a logic failure — the harness correctly told the
+two failure modes apart (HTTP 502 from billing vs. an assertion failure) and
+exited 1 either way. Re-run after topping up credits: **5/5 passed**,
+2026-08-24. This is the passing baseline — run this after touching the prompt,
+the schema, or `legal_corpus.py`.
 
 ### 4. Frontend provenance — DONE, 2026-08-24, commit 3a2b5db.
 
@@ -144,9 +143,10 @@ neither matched the real deadline spread of ~100 and ~465 days).
 Verified by injecting a synthetic assessment via `javascript_tool` against the
 static file (API credits were exhausted at the time) — confirmed the stale
 banner, both countdown urgency states, the provenance block, and the corpus
-footer all render correctly. Not yet re-verified end-to-end against a live
-`/assess` response — do that once credits are back, ideally as part of the
-eval re-run.
+footer all render correctly. Not yet re-verified against a live `/assess`
+response rendered in the actual page (the eval suite exercises the JSON shape,
+not the DOM) — reasonable to do once, but low risk since the JSON shape is
+identical to what was injected.
 
 ### 5. Freshness watcher
 
