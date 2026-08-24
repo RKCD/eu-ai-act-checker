@@ -60,10 +60,22 @@ visible on the result; the reader can reach the Official Journal in one click.
 Done:
 - `legal_corpus.py` — 10 regimes, provenance, resolution, staleness, prompt rendering.
   Verified against EUR-Lex search results and secondary sources on 2026-08-24.
+- Step 1 (wire the corpus into `main.py`) and step 2 (strip dates from
+  `knowledge/eu_ai_act.md`) — done 2026-08-24, commit 40666ef. Verified live
+  against production: Annex III correctly resolves to 2 December 2027/upcoming;
+  Art 50 correctly resolves to 2 August 2026/in_force (previously mis-flagged as
+  upcoming — the bug the LinkedIn post is about); a generative system with an
+  on-market-since-2024 fact pattern correctly surfaces
+  `art_50_2_marking_legacy` (2 December 2026), which the prior version could not
+  represent at all. Open item from that test run: on a minimal-risk system the
+  model still selected `art_5_prohibitions` and `enforcement_penalties` as
+  "applicable" baseline-framework regimes rather than returning an empty list.
+  Defensible, but pin the expected behavior explicitly in the step-3 eval cases
+  so it doesn't drift silently either way.
 
 Not done — build in this order:
 
-### 1. Wire the corpus into `main.py`
+### 1. Wire the corpus into `main.py` — DONE, see above.
 
 Replace the model-generated `deadlines` array in `ASSESSMENT_TOOL`.
 
@@ -84,7 +96,7 @@ inside the cached system block — it is stable between requests.
 Note: `regime_reference_block()` uses `→`. Fine over the API (UTF-8), but avoid
 printing it to a Windows console without encoding set.
 
-### 2. Fix the knowledge document
+### 2. Fix the knowledge document — DONE, see above.
 
 `knowledge/eu_ai_act.md` still contradicts the corpus. Remove every application
 date from it and let it cover only classification substance — Annex III
