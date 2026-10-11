@@ -1,0 +1,123 @@
+/* Taip! – mobile-first, suured nupud, kerge (ilma välisfontide ja raamistiketa – töötab aeglase ühendusega). */
+:root {
+  color-scheme: light;
+  --bg: #f9f9f7;
+  --surface: #fcfcfb;
+  --surface-2: #f0efec;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #898781;
+  --line: #e1e0d9;
+  --brand: #c8102e;        /* abi / tähelepanu */
+  --brand-ink: #ffffff;
+  --accent: #2a78d6;
+  --good: #0ca30c;
+  --good-ink: #006300;
+  --warning: #fab219;
+  --critical: #d03b3b;
+  --seq-1: #86b6ef;
+  --seq-2: #3987e5;
+  --seq-3: #1c5cab;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0d0d0d; --surface: #1a1a19; --surface-2: #262624; --ink: #f0efec; --ink-2: #c3c2b7;
+    --muted: #898781; --line: #2c2c2a; --brand: #e5484d; --accent: #3987e5; --good-ink: #0ca30c;
+    --seq-1: #184f95; --seq-2: #3987e5; --seq-3: #86b6ef;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d0d0d; --surface: #1a1a19; --surface-2: #262624; --ink: #f0efec; --ink-2: #c3c2b7;
+  --muted: #898781; --line: #2c2c2a; --brand: #e5484d; --accent: #3987e5; --good-ink: #0ca30c;
+  --seq-1: #184f95; --seq-2: #3987e5; --seq-3: #86b6ef;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 18px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+a { color: var(--accent); }
+main { max-width: 960px; margin: 0 auto; padding: 16px 16px 64px; }
+h1 { font-size: 1.6rem; margin: 8px 0 16px; line-height: 1.2; }
+h2 { font-size: 1.25rem; margin: 28px 0 12px; }
+h3 { font-size: 1.05rem; margin: 0 0 6px; }
+p { margin: 0 0 12px; }
+small, .muted { color: var(--ink-2); }
+
+.topbar { background: var(--surface); border-bottom: 1px solid var(--line); }
+.topbar-inner { max-width: 960px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.logo { font-weight: 800; font-size: 1.4rem; color: var(--brand); text-decoration: none; letter-spacing: -0.02em; }
+.nav { display: flex; gap: 4px 14px; flex-wrap: wrap; font-size: 0.95rem; }
+.nav a { color: var(--ink); text-decoration: none; padding: 6px 0; }
+.nav a:hover { text-decoration: underline; }
+.who { margin-left: auto; font-size: 0.85rem; color: var(--ink-2); }
+
+.banner { border-radius: var(--radius); padding: 14px 16px; margin: 0 0 16px; font-weight: 600; }
+.banner.crisis { background: var(--brand); color: var(--brand-ink); }
+.banner.info { background: var(--surface-2); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+.grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.spread { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 52px; padding: 12px 20px; border-radius: 12px; border: 2px solid transparent;
+  background: var(--accent); color: #fff; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
+}
+.btn:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid var(--warning); outline-offset: 2px; }
+.btn.big { width: 100%; min-height: 72px; font-size: 1.25rem; }
+.btn.help { background: var(--brand); }
+.btn.secondary { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn.small { min-height: 40px; padding: 6px 14px; font-size: 0.95rem; }
+.btn.danger { background: var(--critical); }
+.btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+
+.home-actions { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .home-actions { grid-template-columns: 1fr 1fr; } .home-actions .btn.help { grid-column: 1 / -1; } }
+
+label { display: block; font-weight: 600; margin: 10px 0 4px; }
+input[type=text], input[type=number], input[type=date], input:not([type]), textarea, select {
+  width: 100%; font: inherit; padding: 12px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); min-height: 48px;
+}
+textarea { min-height: 120px; resize: vertical; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; }
+.check input { width: 24px; height: 24px; flex: none; margin-top: 2px; }
+
+.chip { display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--surface-2); font-size: 0.85rem; margin: 2px 4px 2px 0; }
+.chip.urgent { background: color-mix(in srgb, var(--warning) 30%, var(--surface)); }
+.chip.critical { background: var(--critical); color: #fff; }
+.chip.good { background: color-mix(in srgb, var(--good) 20%, var(--surface)); }
+
+.emergency { background: var(--critical); color: #fff; border-radius: var(--radius); padding: 20px; }
+.emergency a.btn { background: #fff; color: var(--critical); font-size: 1.6rem; width: 100%; min-height: 80px; }
+
+.bubble { background: var(--surface-2); border-radius: 14px; padding: 10px 14px; margin: 8px 0; max-width: 85%; }
+.bubble.me { margin-left: auto; background: color-mix(in srgb, var(--accent) 18%, var(--surface)); }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--ink-2); font-weight: 600; }
+.table-wrap { overflow-x: auto; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.big-number { font-size: 2.2rem; font-weight: 800; line-height: 1.1; }
+.error { color: var(--critical); font-weight: 600; }
+.ok { color: var(--good-ink); font-weight: 600; }
+
+.viz svg { width: 100%; height: auto; display: block; }
+.viz .tick { fill: var(--muted); font-size: 11px; }
+.viz .label { fill: var(--ink); font-size: 12px; }
+
+@media print {
+  .topbar, .no-print, .btn { display: none !important; }
+  body { background: #fff; color: #000; font-size: 12pt; }
+  .card { border: 1px solid #ccc; break-inside: avoid; }
+}

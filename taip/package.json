@@ -1,0 +1,30 @@
+{
+  "name": "taip",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Taip! – kriisiaja abi- ja valmisolekuplatvorm (MVP)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:rls": "bash supabase/tests/run-rls-tests.sh"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.133.0",
+    "next": "^16.4.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "pg": "^8.23.1",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3"
+  }
+}
