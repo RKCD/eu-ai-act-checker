@@ -1,0 +1,189 @@
+/* Kodusahver – neutraalne kujundus, ei järgi ühegi kaupluse stiili. */
+:root {
+  --bg: #f6f4ef;
+  --card: #ffffff;
+  --ink: #22282b;
+  --muted: #5d6669;
+  --line: #dcd8cf;
+  --accent: #2f5d62;
+  --accent-ink: #ffffff;
+  --accent-soft: #e3ecec;
+  --notice-bg: #ece8de;
+  --radius: 14px;
+  --gap: 16px;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 17px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a { color: var(--accent); }
+
+.notice {
+  background: var(--notice-bg);
+  color: var(--ink);
+  font-size: 14px;
+  text-align: center;
+  padding: 8px var(--gap);
+  border-bottom: 1px solid var(--line);
+}
+
+.top {
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 14px var(--gap) 6px;
+}
+.brand { font-weight: 700; letter-spacing: .02em; }
+.progress {
+  height: 4px; background: var(--line); border-radius: 2px; margin-top: 10px; overflow: hidden;
+}
+.progress span {
+  display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s;
+}
+
+main {
+  flex: 1;
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 8px var(--gap) 24px;
+  outline: none;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+h1 { font-size: 1.5rem; line-height: 1.25; margin: 0 0 8px; }
+h2 { font-size: 1.25rem; line-height: 1.3; margin: 0 0 6px; }
+.step { color: var(--muted); font-size: 14px; margin: 0 0 4px; }
+.lead { color: var(--muted); margin: 0 0 16px; }
+.small { font-size: 14px; color: var(--muted); }
+
+/* Valikud */
+.options { display: grid; gap: 10px; margin: 16px 0 0; }
+.opt {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.opt:hover { border-color: var(--accent); }
+.opt[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+.opt:focus-visible, .btn:focus-visible, .stepper button:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--accent); outline-offset: 2px;
+}
+
+fieldset { border: 0; padding: 0; margin: 0 0 20px; }
+legend { font-weight: 600; margin-bottom: 4px; padding: 0; }
+
+/* Loendurid */
+.counter {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--line);
+}
+.counter:last-child { border-bottom: 0; }
+.counter .lbl { display: block; font-weight: 600; }
+.counter .hint { display: block; font-size: 14px; color: var(--muted); }
+.stepper { display: flex; align-items: center; gap: 4px; }
+.stepper button {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+  font-size: 22px; line-height: 1; cursor: pointer;
+}
+.stepper button:disabled { opacity: .35; cursor: default; }
+.stepper output { min-width: 32px; text-align: center; font-size: 1.15rem; font-weight: 700; }
+
+/* Nupud */
+.actions { display: flex; gap: 10px; margin-top: 20px; }
+.btn {
+  flex: 1;
+  min-height: 52px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1.5px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font: inherit; font-weight: 600;
+  cursor: pointer;
+}
+.btn.secondary { background: transparent; color: var(--accent); flex: 0 0 auto; }
+.btn:disabled { opacity: .45; cursor: default; }
+
+/* Tulemus */
+.summary {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0 16px;
+}
+.stat { background: var(--accent-soft); border-radius: 12px; padding: 10px; }
+.stat b { display: block; font-size: 1.2rem; line-height: 1.2; white-space: nowrap; }
+.stat span { font-size: 14px; color: var(--muted); }
+
+.toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer;
+}
+.toggle input { width: 48px; height: 28px; accent-color: var(--accent); margin: 0; }
+
+.list { list-style: none; margin: 16px 0 0; padding: 0; }
+.list li {
+  display: grid; grid-template-columns: 1fr auto; gap: 2px 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--line);
+}
+.list li:last-child { border-bottom: 0; }
+.list .name { font-weight: 600; }
+.list .qty { text-align: right; white-space: nowrap; }
+.list .note { grid-column: 1 / -1; font-size: 14px; color: var(--muted); }
+
+.tips { margin: 16px 0 0; padding-left: 20px; color: var(--muted); font-size: 15px; }
+
+textarea {
+  width: 100%; min-height: 80px; margin-top: 10px; padding: 10px 12px;
+  border: 1.5px solid var(--line); border-radius: 12px; font: inherit; resize: vertical;
+}
+.count { text-align: right; font-size: 13px; color: var(--muted); }
+
+pre.code {
+  background: #1f2426; color: #e8eceb; border-radius: 10px; padding: 12px;
+  font-size: 13px; white-space: pre-wrap; word-break: break-all; margin: 12px 0 0;
+}
+
+.foot {
+  max-width: 640px; width: 100%; margin: 0 auto; padding: 0 var(--gap) 24px;
+  font-size: 14px; color: var(--muted);
+}
+
+/* Andmekaitseteade */
+.prose h1 { margin-top: 8px; }
+.prose h2 { margin-top: 24px; }
+.prose li { margin-bottom: 4px; }
+
+@media (min-width: 720px) {
+  body { font-size: 18px; }
+  .card { padding: 28px; }
+  .stat b { font-size: 1.5rem; }
+}

@@ -1,0 +1,72 @@
+{
+  "A-jah": {
+    "shown": {
+      "id": "75200FE2",
+      "versioon": "1",
+      "allikas": "pere",
+      "taiskasvanud": 1,
+      "lapsed": 2,
+      "eakad": 0,
+      "inimesi": 3,
+      "lemmikloomad": "kass",
+      "toitumine": "taimetoit",
+      "hoiuruum": "vahe",
+      "epood_sagedus": "iga_nadal",
+      "nadala_varu": false,
+      "kaal_72h_kg": 41.1,
+      "kaal_nadal_kg": 93.5,
+      "paindlik": "jah",
+      "tingimus": "",
+      "tingimus_muu": "",
+      "ei_pohjus": "",
+      "kodus_olemas": "vahe",
+      "ostaks_nagunii": "ei_uus",
+      "meeldetuletus": "jah"
+    },
+    "posted": null,
+    "status": "Vastuste kogumine pole veel sisse lülitatud. Palun kopeerige allolev rida ja saatke see lingi jagajale."
+  },
+  "B-muul": {
+    "shown": null,
+    "posted": {
+      "headers": {
+        "accept": "*/*",
+        "content-type": "text/plain",
+        "origin": "http://kodusahver.test",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+        "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
+      "body": "{\"id\":\"B9F2AED8\",\"versioon\":\"1\",\"allikas\":\"valga\",\"taiskasvanud\":2,\"lapsed\":0,\"eakad\":1,\"inimesi\":3,\"lemmikloomad\":\"ei\",\"toitumine\":\"gluteenivaba\",\"hoiuruum\":\"palju\",\"epood_sagedus\":\"harvem\",\"nadala_varu\":true,\"kaal_72h_kg\":39.4,\"kaal_nadal_kg\":90.4,\"paindlik\":\"muul_tingimusel\",\"tingimus\":\"muu\",\"tingimus_muu\":\"Tooge koos minu tavalise tellimusega, siis sobib\",\"ei_pohjus\":\"\",\"kodus_olemas\":\"umbes_pool\",\"ostaks_nagunii\":\"voib_olla\",\"meeldetuletus\":\"ei\"}"
+    },
+    "status": "Teie vastus on salvestatud."
+  },
+  "C-ei": {
+    "shown": {
+      "id": "B9009392",
+      "versioon": "1",
+      "allikas": "otse",
+      "taiskasvanud": 2,
+      "lapsed": 1,
+      "eakad": 0,
+      "inimesi": 3,
+      "lemmikloomad": "koer_kass",
+      "toitumine": "tavaline",
+      "hoiuruum": "keskmine",
+      "epood_sagedus": "ei_telli",
+      "nadala_varu": false,
+      "kaal_72h_kg": 44.1,
+      "kaal_nadal_kg": 101.2,
+      "paindlik": "ei",
+      "tingimus": "",
+      "tingimus_muu": "",
+      "ei_pohjus": "ei_telli",
+      "kodus_olemas": "peaaegu_koik",
+      "ostaks_nagunii": "jah",
+      "meeldetuletus": "ei"
+    },
+    "posted": null,
+    "status": "Vastuste kogumine pole veel sisse lülitatud. Palun kopeerige allolev rida ja saatke see lingi jagajale."
+  }
+}
